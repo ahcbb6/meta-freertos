@@ -7,32 +7,32 @@
 # We have a BSP repo where we get the portable code from there
 # And we get the app code from a different repo 
 
-
+FREERTOS_VERSION = "FreeRTOSv10.2.0"
 
 LICENSE = "MIT"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-FREERTOS_VERSION = "FreeRTOSv10.0.0"
+
 BSP_REPO ?= "../bsp"
 
 SRC_URI = " \
     git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp; \
-    https://sourceforge.net/projects/freertos/files/FreeRTOS/V10.0.0/${FREERTOS_VERSION}.zip;name=freertos; \
+    git://github.com/aws/amazon-freertos.git;name=freertos;destsuffix=freertos; \
 "
-SRC_URI[freertos.md5sum] = "fc707bb965b1d3d59c1a9ed54e8a660f"
-SRC_URI[freertos.sha256sum] = "d58a7e5bb4223b4dc9f73e12c403ebefeee9c423fbb56e19200b5edd894b4cd1"
+
+SRC_URI[freertos.md5sum] = "36b71a9a2b9d26faa8386629f37101a1"
+SRC_URI[freertos.sha256sum] = "e295c2197a1a04ec21fbe7e55e2dbd88b144c1b8c23b28e92ee724aa529da63d"
+
 
 # FreeRTOS License
-LIC_FILES_CHKSUM = "file://../${FREERTOS_VERSION}/FreeRTOS/License/license.txt;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
+LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
 
 # BSP repo License
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
 
-# FreeRTOS 10.0.1
-#SRC_URI[md5sum] = "3d2d74725abe2933a960d7ee1c35456a"
-#SRC_URI[sha256sum] = "5d04f890e1fa077646c9212371faf4445ca84e62f83274d37290ade949d3fc29"
 
 
 SRCREV_bsp ?= "${AUTOREV}"
+SRCREV_freertos ?= "${AUTOREV}"
 
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
@@ -50,7 +50,18 @@ FILES_${PN} += "image.bin image.elf"
 
 do_configure_prepend(){
   # Copy portable code from bsp repo into FreeRTOS source code
-  cp -r ${WORKDIR}/bsp/portable/GCC/ARM926EJ-S/ ${WORKDIR}/${FREERTOS_VERSION}/FreeRTOS/Source/portable/GCC/ARM926EJ-S/
+  cp -r ${WORKDIR}/bsp/portable/GCC/ARM926EJ-S/ ${WORKDIR}/freertos/lib/FreeRTOS/portable/GCC/ARM926EJ-S/
+}
+
+
+# QEMU crashes when FreeRTOS is built with optimizations, disable those for now
+CFLAGS_remove = "-O2"
+
+# We need to define the port were using, along with the FreeRTOS source code location
+EXTRA_OEMAKE = "PORT=ARM926EJ-S FREERTOS_SRC=../freertos/lib/FreeRTOS/ 'CFLAGS=${CFLAGS} -I../freertos/lib/FreeRTOS/ -I../freertos/lib/include/ -I../freertos/lib/include/private/ -I${S}/drivers/include/'"
+
+do_compile(){
+  oe_runmake ${EXTRA_OEMAKE}
 }
 
 do_install(){
@@ -71,7 +82,7 @@ do_rootfs(){
 :
 }
 
-# Qemu parameters
+# QEMU parameters
 QB_SYSTEM_NAME = "qemu-system-arm"
 QB_DEFAULT_KERNEL = "${IMAGE_LINK_NAME}.bin"
 QB_MEM = "-m 128"
