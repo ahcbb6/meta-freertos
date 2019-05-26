@@ -93,7 +93,7 @@ QB_DTB = ""
 
 # These are necessary to trick the build system into thinking
 # its building an image recipe so it generates the qemuboot.conf
-addtask do_deploy after do_install before do_build
+addtask do_deploy after do_write_qemuboot_conf before do_build
 addtask do_rootfs before do_deploy after do_install
 addtask do_image after do_rootfs before do_build
 inherit qemuboot
