@@ -1,0 +1,32 @@
+The original source code did not use a C library.
+
+Since we have newlib available now, patch the
+Makefile to use it, other apps should not need
+this.
+
+Upstream-Status: Inappropriate [oe-specific]
+
+Signed-off-by: Alejandro Hernandez <aehs29@gmail.com>
+
+Index: bsp/Makefile
+===================================================================
+--- bsp.orig/Makefile
++++ bsp/Makefile
+@@ -74,7 +74,7 @@ DRIVERS_OBJS = timer.o interrupt.o uart.
+ 
+ APP_OBJS = init.o main.o print.o receive.o
+ # nostdlib.o must be commented out if standard lib is going to be linked!
+-APP_OBJS += nostdlib.o
++#APP_OBJS += nostdlib.o
+ 
+ 
+ # All object files specified above are prefixed the intermediate directory
+@@ -108,7 +108,7 @@ $(OBJDIR) :
+ 	mkdir -p $@
+ 
+ $(ELF_IMAGE) : $(OBJS) $(LINKER_SCRIPT)
+-	$(LD) -nostdlib -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) $(OFLAG) $@
++	$(LD) -L ${STAGING_LIBDIR} -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) -lc $(OFLAG) $@
+ 
+ debug : _debug_flags all
+ 
