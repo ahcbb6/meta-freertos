@@ -28,7 +28,7 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 ```
 DISTRO = "poky-freertos"
 
-MACHINE = "qemuarm" # It is the only one supported at the moment
+MACHINE = "qemuarmv5" # It is the only one supported at the moment
 ```
 
 5.- Build an example application:
