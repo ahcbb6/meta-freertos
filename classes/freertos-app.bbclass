@@ -38,7 +38,6 @@ PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
 S="${WORKDIR}/bsp"
 
-DEPENDS = "qemu-helper-native"
 
 inherit deploy
 do_deploy[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
@@ -91,9 +90,23 @@ QB_OPT_APPEND = "-nographic"
 QB_DEFAULT_FSTYPE = "bin"
 QB_DTB = ""
 
-# These are necessary to trick the build system into thinking
+# This next part is necessary to trick the build system into thinking
 # its building an image recipe so it generates the qemuboot.conf
 addtask do_deploy after do_write_qemuboot_conf before do_build
 addtask do_rootfs before do_deploy after do_install
 addtask do_image after do_rootfs before do_build
 inherit qemuboot
+
+
+# Based on image.bbclass to make sure we build qemu
+python(){
+    def extraimage_getdepends(task):
+        deps = ""
+        for dep in (d.getVar('EXTRA_IMAGEDEPENDS') or "").split():
+             deps += " %s:%s" % (dep, task)
+        return deps
+    # do_addto_recipe_sysroot doesnt exist for all recipes, but we need it to have
+    # /usr/bin on recipe-sysroot (qemu) populated, for now it should work fine, although
+    # there might be issues if EXTRA_IMAGEDEPENDS contains something else than qemu
+    d.appendVarFlag('do_image', 'depends', extraimage_getdepends('do_addto_recipe_sysroot'))
+}
