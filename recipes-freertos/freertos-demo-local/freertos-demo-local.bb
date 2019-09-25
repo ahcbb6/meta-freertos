@@ -21,6 +21,4 @@ SRC_URI += " \
     file://use-newlib-as-libc.patch \
 "
 
-SRCREV_FORMAT = "bsp"
-
 EXTRA_OEMAKE += "APP_SRC=${WORKDIR}/ 'STAGING_LIBDIR=${STAGING_LIBDIR}'"

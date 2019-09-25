@@ -8,7 +8,7 @@ SRC_URI += " \
     file://use-newlib-as-libc.patch \
 "
 
-SRCREV_FORMAT = "bsp_app"
+SRCREV_FORMAT = "freertos_bsp_app"
 SRCREV_app = "${AUTOREV}"
 
 

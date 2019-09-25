@@ -15,13 +15,11 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 BSP_REPO ?= "../bsp"
 
 SRC_URI = " \
-    git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp; \
     git://github.com/aws/amazon-freertos.git;name=freertos;destsuffix=freertos; \
+    git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp; \
 "
 
-SRC_URI[freertos.md5sum] = "36b71a9a2b9d26faa8386629f37101a1"
-SRC_URI[freertos.sha256sum] = "e295c2197a1a04ec21fbe7e55e2dbd88b144c1b8c23b28e92ee724aa529da63d"
-
+SRCREV_FORMAT ?= "freertos_bsp"
 
 # FreeRTOS License
 LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
