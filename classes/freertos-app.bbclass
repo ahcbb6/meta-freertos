@@ -7,7 +7,8 @@
 # We have a BSP repo where we get the portable code from there
 # And we get the app code from a different repo 
 
-FREERTOS_VERSION = "FreeRTOSv10.2.0"
+# FreeRTOS kernel version (FreeRTOS.h)
+FREERTOS_VERSION = "FreeRTOSv10.2.1"
 
 LICENSE = "MIT"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
@@ -29,8 +30,8 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
 
 
 
-SRCREV_bsp ?= "${AUTOREV}"
-SRCREV_freertos ?= "${AUTOREV}"
+SRCREV_bsp ?= "d2b58036f77e3470af56854602c1d701021c2fb9"
+SRCREV_freertos ?= "5bee12b2cd5ddbf2c6b3bf394ea41649999a1453"
 
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
@@ -47,7 +48,7 @@ FILES_${PN} += "image.bin image.elf"
 
 do_configure_prepend(){
   # Copy portable code from bsp repo into FreeRTOS source code
-  cp -r ${WORKDIR}/bsp/portable/GCC/ARM926EJ-S/ ${WORKDIR}/freertos/lib/FreeRTOS/portable/GCC/ARM926EJ-S/
+  cp -r ${WORKDIR}/bsp/portable/GCC/ARM926EJ-S/ ${WORKDIR}/freertos/freertos_kernel/portable/GCC/ARM926EJ-S/
 }
 
 
@@ -55,7 +56,7 @@ do_configure_prepend(){
 CFLAGS_remove = "-O2"
 
 # We need to define the port were using, along with the FreeRTOS source code location
-EXTRA_OEMAKE = "PORT=ARM926EJ-S FREERTOS_SRC=../freertos/lib/FreeRTOS/ 'CFLAGS=${CFLAGS} -I../freertos/lib/FreeRTOS/ -I../freertos/lib/include/ -I../freertos/lib/include/private/ -I${S}/drivers/include/'"
+EXTRA_OEMAKE = "PORT=ARM926EJ-S FREERTOS_SRC=../freertos/freertos_kernel/ 'CFLAGS=${CFLAGS} -I../freertos/freertos_kernel -I../freertos/freertos_kernel/include/ -I${S}/drivers/include/'"
 
 do_compile(){
   oe_runmake ${EXTRA_OEMAKE}
