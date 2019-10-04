@@ -37,7 +37,7 @@ stages:
 env:
   global:
   - DISTRO="poky-freertos"
-  - SSTATE_MIRRORS="file://.* http://autobuilder.yocto.io/pub/sstate/PATH;downloadfilename=PATH"
+  - SSTATE_MIRRORS="file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH"
   matrix:
   - MACHINE="qemuarmv5"
 
