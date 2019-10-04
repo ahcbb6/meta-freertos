@@ -10,9 +10,9 @@ pool:
   vmImage: 'ubuntu-18.04'
 
 variables:
-  DISTRO="poky-freertos"
-  SSTATE_MIRRORS="file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH"
-  MACHINE="qemuarmv5"
+  DISTRO: 'poky-freertos'
+  SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH'
+  MACHINE: 'qemuarmv5'
 
 
 steps:
@@ -20,17 +20,17 @@ steps:
   displayName: 'Run a one-line script'
 
 - bash: |                                                                                                                   
-  - sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+    sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
      build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
      xz-utils debianutils iputils-ping libsdl1.2-dev xterm
-  - cd                                                                                                                 
-  - git clone git://git.yoctoproject.org/poky                                                                             
-  - cd poky
-  - git clone https://github.com/aehs29/meta-freertos.git                                                                                                      
-  - source oe-init-build-env                                                                                              
-  - echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf                                                                  
-  - echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf                                                                    
-  - echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf                                                    
-  - bitbake-layers add-layer ../../meta-freertos                                                                          
-  - bitbake freertos-demo 
+    cd                                                                                                                 
+    git clone git://git.yoctoproject.org/poky                                                                             
+    cd poky
+    git clone https://github.com/aehs29/meta-freertos.git                                                                                                      
+    source oe-init-build-env                                                                                              
+    echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf                                                                  
+    echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf                                                                    
+    echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf                                                    
+    bitbake-layers add-layer ../../meta-freertos                                                                          
+    bitbake freertos-demo 
   displayName: 'Run a multi-line script'
