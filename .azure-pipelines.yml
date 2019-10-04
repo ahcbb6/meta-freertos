@@ -1,0 +1,84 @@
+trigger:
+- master
+- master-next
+- warrior
+
+schedules:
+- cron: "0 0 * * *"
+  displayName: Weekly Sunday build
+  branches:
+    include:
+    - master
+    - warrior
+  always: true
+
+
+jobs:
+- job: FreeRTOSJob
+  timeoutInMinutes: 0
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  variables:
+    DISTRO: 'poky-freertos'
+    #SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH'
+    MACHINE: 'qemuarmv5'
+
+  steps:
+  - bash: |
+      echo "Building FreeRTOS using Yocto"
+      echo "Debug variables:"
+      echo Build.SourceBranch	$(Build.SourceBranch)
+      echo Build.SourceBranchName	$(Build.SourceBranchName)
+      echo System.PullRequest.SourceBranch	$(System.PullRequest.SourceBranch)
+      echo System.PullRequest.TargetBranch $(System.PullRequest.TargetBranch)
+    displayName: 'Initial echo'
+
+  - bash: |
+      echo "Installing dependencies"
+      sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+      build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+      xz-utils debianutils iputils-ping libsdl1.2-dev xterm
+    displayName: 'Installing Dependencies'
+
+  - bash: |
+      cd ~/
+      echo "Cloning Yocto Project"
+      PULLREQBRANCH=$(System.PullRequest.TargetBranch)
+      if [ -z "$PULLREQBRANCH" ]; then
+        if [ "$(Build.SourceBranchName)" == "master-next" ]; then
+          YPBRANCH="master";
+        else
+          YPBRANCH=$(Build.SourceBranchName);
+        fi
+      else
+        YPBRANCH=$PULLREQBRANCH;
+      fi
+      echo "Building Yocto branch: $YPBRANCH"
+      git clone git://git.yoctoproject.org/poky -b $YPBRANCH
+    displayName: 'Cloning Repositories'
+
+  - bash: |
+      # Add layers and create local.conf
+      cd ~/poky
+      source oe-init-build-env
+      echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf
+      echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf
+      #echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf
+      bitbake-layers add-layer $(Build.SourcesDirectory)
+    displayName: 'Create build configuration'
+
+  - bash: |
+      echo "Building sample demo (local)"
+      cd ~/poky
+      source oe-init-build-env
+      bitbake freertos-demo-local -k
+    displayName: 'Build FreeRTOS local demo'
+
+  - bash: |
+      echo "Building sample demo"
+      cd ~/poky
+      source oe-init-build-env
+      bitbake freertos-demo -k
+    displayName: 'Build FreeRTOS demo'
