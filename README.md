@@ -1,6 +1,11 @@
 # meta-freertos
-
 FreeRTOS distro layer compatible with OpenEmbedded
+
+## Build Status
+
+|  master 	| [![Build Status](https://dev.azure.com/aehs291/freertos-layer/_apis/build/status/aehs29.meta-freertos?branchName=master)](https://dev.azure.com/aehs291/freertos-layer/_build/latest?definitionId=1&branchName=master)  	|
+|:-:	|---	|
+| warrior  	|  [![Build Status](https://dev.azure.com/aehs291/freertos-layer/_apis/build/status/aehs29.meta-freertos?branchName=warrior)](https://dev.azure.com/aehs291/freertos-layer/_build/latest?definitionId=1&branchName=warrior) 	|
 
 ## Dependencies
 
