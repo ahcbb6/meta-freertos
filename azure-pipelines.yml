@@ -11,7 +11,7 @@ jobs:
 
   variables:
     DISTRO: 'poky-freertos'
-    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH'
+    #SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH'
     MACHINE: 'qemuarmv5'
 
 
