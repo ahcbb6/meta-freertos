@@ -9,7 +9,7 @@ trigger:
 
 jobs:
 - job: myJob
-  timeoutInMinutes: 2
+  timeoutInMinutes: 0
 
   pool:
     vmImage: 'ubuntu-latest'
