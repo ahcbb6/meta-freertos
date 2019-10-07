@@ -3,12 +3,13 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+
+trigger:
+- master
+
 jobs:
 - job: myJob
   timeoutInMinutes: 2
-
-  trigger:
-  - master
 
   pool:
     vmImage: 'ubuntu-latest'
