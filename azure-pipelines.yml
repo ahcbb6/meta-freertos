@@ -28,6 +28,7 @@ jobs:
   - bash: |
       echo Building FreeRTOS $PWD
       ls -l
+      git branch
     displayName: 'echoInit'
 
   - bash: |                                                                                                                   
