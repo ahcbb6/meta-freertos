@@ -29,6 +29,10 @@ jobs:
       echo Building FreeRTOS $PWD
       ls -l
       git branch
+      echo Build.SourceBranch	$(Build.SourceBranch)
+      echo Build.SourceBranchName	$(Build.SourceBranchName)
+      echo System.PullRequest.SourceBranch	$(System.PullRequest.SourceBranch)
+      echo System.PullRequest.TargetBranch $(System.PullRequest.TargetBranch)
     displayName: 'echoInit'
 
   - bash: |                                                                                                                   
