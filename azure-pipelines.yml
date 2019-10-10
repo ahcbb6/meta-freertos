@@ -48,12 +48,14 @@ jobs:
       cd ~/
       echo "Cloning Yocto Project"
       PULLREQBRANCH=$(System.PullRequest.TargetBranch)
+      echo "PULLREQ: $PULLREQBRANCH"
       if [ -z "$PULLREQBRANCH" ]; then
         YPBRANCH=$(Build.SourceBranchName);
       else
         YPBRANCH=$PULLREQBRANCH;
       fi
-      git clone git://git.yoctoproject.org/poky -b $(Build.SourceBranchName)                                                                    
+      echo "YPBRANCH: $YPBRANCH"
+      git clone git://git.yoctoproject.org/poky -b $YPBRANCH                                                                    
       cd poky
       #echo "Cloning meta-freertos"                                                                                                                 
       #git clone https://github.com/aehs29/meta-freertos.git
