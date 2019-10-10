@@ -68,7 +68,7 @@ jobs:
       echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf                                                                  
       echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf                                                                    
       echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf                                                    
-      bitbake-layers add-layer $(Build.SourcesDirectory)/meta-freertos
+      bitbake-layers add-layer $(Build.SourcesDirectory)
     displayName: 'Create configuration'
 
   - bash: |
