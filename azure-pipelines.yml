@@ -51,7 +51,7 @@ jobs:
       echo "PULLREQ: $PULLREQBRANCH"
       if [ -z "$PULLREQBRANCH" ]; then
         YPBRANCH=$(Build.SourceBranchName);
-      elsePULLREQ
+      else
         YPBRANCH=$PULLREQBRANCH;
       fi
       echo "YPBRANCH: $YPBRANCH"
