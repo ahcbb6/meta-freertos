@@ -23,26 +23,27 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 
 ## Building a FreeRTOS application
 
-1.- Clone this layer along with the specified layers
-
-2.- $ source oe-init-build-env
-
-3.- Add this layer to BBLAYERS on conf/bblayers.conf
-
-4.- Add the following to your conf/local.conf:
-
+1.- Clone the required repositories
 ```
-DISTRO = "poky-freertos"
-
-MACHINE = "qemuarmv5" # It is the only one supported at the moment
+$ git clone https://git.yoctoproject.org/git/poky -b zeus
+$ cd poky
+$ git clone https://github.com/aehs29/meta-freertos.git -b zeus
 ```
-
-5.- Build an example application:
-
+2.- Add meta-freertos to your bblayers.conf
+```
+$ source oe-init-build-env
+$ bitbake-layers add-layer ../meta-freertos
+```
+3.- Add the required variables to your local.conf
+```
+$ echo "MACHINE = \"qemuarmv5\"" >> ./conf/local.conf
+$ echo "DISTRO = \"poky-freertos\"" >> ./conf/local.conf
+```
+4.- Build a sample FreeRTOS application:
 ```
 $ bitbake freertos-demo
 ```
-6.- Run the application on QEMU:
+5.- Run the application on QEMU:
 ```
 $ runqemu
 ```
