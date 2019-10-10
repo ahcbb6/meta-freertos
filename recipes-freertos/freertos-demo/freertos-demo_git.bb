@@ -1,6 +1,6 @@
 SUMMARY = "FreeRTOS application example based on https://github.com/jkovacic/"
 
-inherit freertos-app
+inherit freertos-armv5
 
 # App can be replaced by using a different repo
 SRC_URI += " \

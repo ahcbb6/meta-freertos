@@ -2,9 +2,9 @@ SUMMARY = "FreeRTOS application example based on https://github.com/jkovacic/"
 
 # This app is the same as the one from the above repo,
 # the only change is that this example is built locally
-# istead of cloning from git
+# instead of cloning from git
 
-inherit freertos-app
+inherit freertos-armv5
 
 # App can be replaced by using a different repo
 SRC_URI += " \

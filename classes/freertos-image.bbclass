@@ -1,11 +1,16 @@
-# FreeRTOS class
+# FreeRTOS image class
+#
 # This class is meant to be inherited by recipes for FreeRTOS apps
 # It contains code that would be used by all of them, where every 
-# recipe would just need to override certain parts
+# recipe would just need to override certain parts.
 #
-# We are getting the FreeRTOS source code from upstream
-# We have a BSP repo where we get the portable code from there
-# And we get the app code from a different repo 
+# For scalability purposes, code within this class focuses on the
+# "image" wiring that makes apps work properly with openembedded-core
+# infrastructure.
+
+# We are getting the FreeRTOS source code from upstream (this class)
+# We have a BSP repo where we get the portable code from (bsp class)
+# And we get the app code from a different repo (app recipe)
 
 # FreeRTOS kernel version (FreeRTOS.h)
 FREERTOS_VERSION = "FreeRTOSv10.2.1"
@@ -13,11 +18,8 @@ FREERTOS_VERSION = "FreeRTOSv10.2.1"
 LICENSE = "MIT"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-BSP_REPO ?= "../bsp"
-
 SRC_URI = " \
     git://github.com/aws/amazon-freertos.git;name=freertos;destsuffix=freertos; \
-    git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp; \
 "
 
 SRCREV_FORMAT ?= "freertos_bsp"
@@ -25,39 +27,28 @@ SRCREV_FORMAT ?= "freertos_bsp"
 # FreeRTOS License
 LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
 
-# BSP repo License
-LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
-
-
-
-SRCREV_bsp ?= "fa926b03ad8f3469c22292c8f9bff9a03dbaf555"
 SRCREV_freertos ?= "5bee12b2cd5ddbf2c6b3bf394ea41649999a1453"
 
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
-S="${WORKDIR}/bsp"
+FREERTOS_KERNEL_SRC = "${WORKDIR}/freertos/freertos_kernel/"
 
 inherit rootfs-postcommands
 inherit deploy
 do_deploy[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 DEPLOYDIR = "${IMGDEPLOYDIR}"
 do_rootfs[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
-
 IMAGE_LINK_NAME ?= "freertos-image-${MACHINE}"
-
-FILES_${PN} += "image.bin image.elf"
-
-do_configure_prepend(){
-  # Copy portable code from bsp repo into FreeRTOS source code
-  cp -r ${WORKDIR}/bsp/portable/GCC/ARM926EJ-S/ ${WORKDIR}/freertos/freertos_kernel/portable/GCC/ARM926EJ-S/
-}
-
 
 # QEMU crashes when FreeRTOS is built with optimizations, disable those for now
 CFLAGS_remove = "-O2"
 
-# We need to define the port were using, along with the FreeRTOS source code location
-EXTRA_OEMAKE = "PORT=ARM926EJ-S FREERTOS_SRC=../freertos/freertos_kernel/ 'CFLAGS=${CFLAGS} -I../freertos/freertos_kernel -I../freertos/freertos_kernel/include/ -I${S}/drivers/include/'"
+# Extra CFLAGS required for FreeRTOS include files
+CFLAGS_append = " -I${FREERTOS_KERNEL_SRC} -I${FREERTOS_KERNEL_SRC}/include/"
+
+# We need to define the FreeRTOS source code location, the port we'll be using
+# should be defined on the specific bsp class
+EXTRA_OEMAKE = " FREERTOS_SRC=${FREERTOS_KERNEL_SRC} 'CFLAGS=${CFLAGS}'"
 
 do_compile(){
   oe_runmake ${EXTRA_OEMAKE}
@@ -77,6 +68,8 @@ do_image(){
 :
 }
 
+FILES_${PN} += "image.bin image.elf"
+
 python do_rootfs(){
     from oe.utils import execute_pre_post_process
     from pathlib import Path
@@ -95,14 +88,11 @@ python do_rootfs(){
     execute_pre_post_process(d, d.getVar('ROOTFS_POSTPROCESS_COMMAND'))
 }
 
-# QEMU parameters
-QB_SYSTEM_NAME = "qemu-system-arm"
+# QEMU generic FreeRTOS parameters
 QB_DEFAULT_KERNEL = "${IMAGE_LINK_NAME}.bin"
 QB_MEM = "-m 128"
-QB_MACHINE = "-M versatilepb"
 QB_OPT_APPEND = "-nographic"
 QB_DEFAULT_FSTYPE = "bin"
-QB_DTB = ""
 
 # This next part is necessary to trick the build system into thinking
 # its building an image recipe so it generates the qemuboot.conf
