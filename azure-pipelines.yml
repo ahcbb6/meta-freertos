@@ -25,9 +25,9 @@ jobs:
     MACHINE: 'qemuarmv5'
 
   steps:
-  - script: |
-    echo Building FreeRTOS $PWD
-    ls -l
+  - bash: |
+      echo Building FreeRTOS $PWD
+      ls -l
     displayName: 'echoInit'
 
   - bash: |                                                                                                                   
