@@ -40,12 +40,12 @@ jobs:
 
   - bash: |
       # Pull Repositories
+      cd ~/
       echo "Cloning Yocto Project"
-      cd
-      git clone git://git.yoctoproject.org/poky                                                                             
+      git clone git://git.yoctoproject.org/poky -b $(Build.SourceBranchName)                                                                    
       cd poky
-      echo "Cloning meta-freertos"                                                                                                                 
-      git clone https://github.com/aehs29/meta-freertos.git
+      #echo "Cloning meta-freertos"                                                                                                                 
+      #git clone https://github.com/aehs29/meta-freertos.git
     displayName: 'Cloning Repositories'
       
   - bash: |
@@ -54,7 +54,7 @@ jobs:
       echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf                                                                  
       echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf                                                                    
       echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf                                                    
-      bitbake-layers add-layer ../meta-freertos
+      bitbake-layers add-layer $(Build.SourcesDirectory)/meta-freertos
     displayName: 'Create configuration'
 
   - bash: |
