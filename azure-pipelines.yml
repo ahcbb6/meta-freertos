@@ -1,9 +1,19 @@
 trigger:
 - master
-- warrior
+- zeus
+- warrrior
+
+schedules:
+- cron: "0 0 * * *"
+  displayName: Weekly Sunday build
+  branches:
+    include:
+    - releases/*
+  always: true
+
 
 jobs:
-- job: testJob
+- job: FreeRTOSJob
   timeoutInMinutes: 0
 
   pool:
@@ -14,9 +24,8 @@ jobs:
     #SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH'
     MACHINE: 'qemuarmv5'
 
-
   steps:
-  - script: echo Testing a Meta-FreeRTOS build!
+  - script: echo Building FreeRTOS
     displayName: 'echoInit'
 
   - bash: |                                                                                                                   
@@ -25,20 +34,35 @@ jobs:
       sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
       build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
       xz-utils debianutils iputils-ping libsdl1.2-dev xterm
+    displayName: 'Installing Dependencies'
+
+  - bash: |
+      # Pull Repositories
+      echo "Cloning Yocto Project"
       cd
-      # Clone repositories
-      echo "Cloning YP"                                                                                                                 
       git clone git://git.yoctoproject.org/poky                                                                             
       cd poky
       echo "Cloning meta-freertos"                                                                                                                 
-      git clone https://github.com/aehs29/meta-freertos.git                                                                                                      
+      git clone https://github.com/aehs29/meta-freertos.git
+    displayName: 'Cloning Repositories'
+      
+  - bash: |
+      # Add layers and create local.conf                                                                                  
       source oe-init-build-env                                                                                              
       echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf                                                                  
       echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf                                                                    
       echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf                                                    
-        bitbake-layers add-layer ../meta-freertos
+      bitbake-layers add-layer ../meta-freertos
+    displayName: 'Create configuration'
+
+  - bash: |
       # Build
-      echo "Building sample applications"                                                                          
+      echo "Building sample demo (local)"                                                                          
       bitbake freertos-demo-local -k
+    displayName: 'Build FreeRTOS local demo'
+
+  - bash: |
+      # Build
+      echo "Building sample demo"                                                                          
       bitbake freertos-demo -k
-    displayName: 'Test FreeRTOS applications'
+    displayName: 'Build FreeRTOS demo'
