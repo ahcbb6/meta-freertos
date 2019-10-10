@@ -51,7 +51,7 @@ jobs:
       echo "PULLREQ: $PULLREQBRANCH"
       if [ -z "$PULLREQBRANCH" ]; then
         YPBRANCH=$(Build.SourceBranchName);
-      else
+      elsePULLREQ
         YPBRANCH=$PULLREQBRANCH;
       fi
       echo "YPBRANCH: $YPBRANCH"
@@ -62,7 +62,8 @@ jobs:
     displayName: 'Cloning Repositories'
       
   - bash: |
-      # Add layers and create local.conf                                                                                  
+      # Add layers and create local.conf
+      cd ~/poky                                                                                  
       source oe-init-build-env                                                                                              
       echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf                                                                  
       echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf                                                                    
@@ -72,12 +73,16 @@ jobs:
 
   - bash: |
       # Build
+      cd ~/poky                                                                                  
+      source oe-init-build-env
       echo "Building sample demo (local)"                                                                          
       bitbake freertos-demo-local -k
     displayName: 'Build FreeRTOS local demo'
 
   - bash: |
       # Build
+      cd ~/poky                                                                                  
+      source oe-init-build-env
       echo "Building sample demo"                                                                          
       bitbake freertos-demo -k
     displayName: 'Build FreeRTOS demo'
