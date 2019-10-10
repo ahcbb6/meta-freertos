@@ -37,10 +37,11 @@ PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
 S="${WORKDIR}/bsp"
 
-
+inherit rootfs-postcommands
 inherit deploy
 do_deploy[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 DEPLOYDIR = "${IMGDEPLOYDIR}"
+do_rootfs[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 
 IMAGE_LINK_NAME ?= "freertos-image-${MACHINE}"
 
@@ -76,8 +77,22 @@ do_image(){
 :
 }
 
-do_rootfs(){
-:
+python do_rootfs(){
+    from oe.utils import execute_pre_post_process
+    from pathlib import Path
+
+    # Write empty manifest testdate file
+    deploy_dir = d.getVar('DEPLOYDIR')
+    link_name = d.getVar('IMAGE_LINK_NAME')
+    manifest_name = d.getVar('IMAGE_MANIFEST')
+
+    Path(manifest_name).touch()
+    if os.path.exists(manifest_name) and link_name:
+            manifest_link = deploy_dir + "/" + link_name + ".manifest"
+            if os.path.lexists(manifest_link):
+                os.remove(manifest_link)
+            os.symlink(os.path.basename(manifest_name), manifest_link)
+    execute_pre_post_process(d, d.getVar('ROOTFS_POSTPROCESS_COMMAND'))
 }
 
 # QEMU parameters
