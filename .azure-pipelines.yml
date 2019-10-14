@@ -5,7 +5,7 @@ trigger:
 - warrior
 
 schedules:
-- cron: "0 0 * * *"
+- cron: "0 0 * * 0"
   displayName: Weekly Sunday build
   branches:
     include:
@@ -24,22 +24,29 @@ jobs:
 
   variables:
     DISTRO: 'poky-freertos'
-    #SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/2.99/PATH;downloadfilename=PATH;downloadfilename=PATH'
+    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/3.0/PATH;downloadfilename=PATH;downloadfilename=PATH'
     MACHINE: 'qemuarmv5'
+    DEPLOY_ARTIFACTS_DIR: '/mnt/deploydir/'
 
   steps:
   - bash: |
       echo "Building FreeRTOS using Yocto"
-      echo "Debug variables:"
-      echo Build.SourceBranch	$(Build.SourceBranch)
-      echo Build.SourceBranchName	$(Build.SourceBranchName)
-      echo System.PullRequest.SourceBranch	$(System.PullRequest.SourceBranch)
-      echo System.PullRequest.TargetBranch $(System.PullRequest.TargetBranch)
+      if [ "$(DEBUG_PIPE)" == "1" ]; then
+        echo "Debug variables:"
+        echo Build.SourceBranch $(Build.SourceBranch)
+        echo Build.SourceBranchName $(Build.SourceBranchName)
+        echo System.PullRequest.SourceBranch $(System.PullRequest.SourceBranch)
+        echo System.PullRequest.TargetBranch $(System.PullRequest.TargetBranch)
+        echo System.DefaultWorkingDirectory $(System.DefaultWorkingDirectory)
+      fi
+      sudo mkdir $(DEPLOY_ARTIFACTS_DIR)
+      sudo chown vsts:vsts ${DEPLOY_ARTIFACTS_DIR}
     displayName: 'Initial echo'
 
   - bash: |
       echo "Installing dependencies"
-      sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+      sudo apt update
+      sudo apt install gawk wget git-core diffstat unzip texinfo gcc-multilib \
       build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
       xz-utils debianutils iputils-ping libsdl1.2-dev xterm
     displayName: 'Installing Dependencies'
@@ -63,24 +70,47 @@ jobs:
 
   - bash: |
       # Add layers and create local.conf
+      echo "Creating proper bblayers.conf"
       cd ~/poky
       source oe-init-build-env
       echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf
       echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf
-      #echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf
+      echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf
       bitbake-layers add-layer $(Build.SourcesDirectory)
+
+      echo "bblayers.conf:"
+      cat conf/bblayers.conf
     displayName: 'Create build configuration'
 
   - bash: |
       echo "Building sample demo (local)"
       cd ~/poky
       source oe-init-build-env
-      bitbake freertos-demo-local -k
+      echo "Building with the following configuration:"
+      tail -n 10 conf/local.conf
+      bitbake freertos-demo-local
     displayName: 'Build FreeRTOS local demo'
 
   - bash: |
       echo "Building sample demo"
       cd ~/poky
       source oe-init-build-env
-      bitbake freertos-demo -k
+      echo "Building with the following configuration:"
+      tail -n 10 conf/local.conf
+      bitbake freertos-demo
     displayName: 'Build FreeRTOS demo'
+
+  - bash: |
+      echo "Moving artifacts to be deployed"
+      rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
+      # Kernel BIN
+      mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.bin ${DEPLOY_ARTIFACTS_DIR}
+      # Kernel ELF
+      mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.elf ${DEPLOY_ARTIFACTS_DIR}
+      # QEMUboot
+      mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo-*${MACHINE}-*.qemuboot.conf ${DEPLOY_ARTIFACTS_DIR}
+      echo "Artifacts moved"
+    displayName: 'Moving Artifacts - $(MACHINE) - $(DISTRO)'
+
+  - publish: $(DEPLOY_ARTIFACTS_DIR)
+    artifact: $(DISTRO)-(MACHINE)
