@@ -30,7 +30,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
 
 
 
-SRCREV_bsp ?= "d2b58036f77e3470af56854602c1d701021c2fb9"
+SRCREV_bsp ?= "fa926b03ad8f3469c22292c8f9bff9a03dbaf555"
 SRCREV_freertos ?= "5bee12b2cd5ddbf2c6b3bf394ea41649999a1453"
 
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
