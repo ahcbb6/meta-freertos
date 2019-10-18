@@ -39,6 +39,7 @@ do_deploy[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 DEPLOYDIR = "${IMGDEPLOYDIR}"
 do_rootfs[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 IMAGE_LINK_NAME ?= "freertos-image-${MACHINE}"
+IMAGE_NAME_SUFFIX ?= ""
 
 # QEMU crashes when FreeRTOS is built with optimizations, disable those for now
 CFLAGS_remove = "-O2"
