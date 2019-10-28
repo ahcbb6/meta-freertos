@@ -23,7 +23,7 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   variables:
-    DISTRO: 'poky-freertos'
+    DISTRO: 'freertos'
     SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/3.0/PATH;downloadfilename=PATH;downloadfilename=PATH'
     MACHINE: 'qemuarmv5'
     DEPLOY_ARTIFACTS_DIR: '/mnt/deploydir/'

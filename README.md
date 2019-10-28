@@ -37,7 +37,7 @@ $ bitbake-layers add-layer ../meta-freertos
 3.- Add the required variables to your local.conf
 ```bash
 $ echo "MACHINE = \"qemuarmv5\"" >> ./conf/local.conf
-$ echo "DISTRO = \"poky-freertos\"" >> ./conf/local.conf
+$ echo "DISTRO = \"freertos\"" >> ./conf/local.conf
 ```
 4.- Build a sample FreeRTOS application:
 ```bash
