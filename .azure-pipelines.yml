@@ -5,8 +5,8 @@ trigger:
 - warrior
 
 schedules:
-- cron: "0 0 * * 0"
-  displayName: Weekly Sunday build
+- cron: "0 6 * * *"
+  displayName: Daily build
   branches:
     include:
     - master
@@ -20,7 +20,7 @@ jobs:
   timeoutInMinutes: 0
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
 
   variables:
     DISTRO: 'poky-freertos'
