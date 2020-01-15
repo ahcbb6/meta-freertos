@@ -1,0 +1,39 @@
+trigger:
+- master
+- master-next
+- zeus
+- warrior
+
+schedules:
+- cron: "0 6 * * *"
+  displayName: Daily build
+  branches:
+    include:
+    - master
+    - zeus
+    - warrior
+  always: true
+
+variables:
+    DISTRO: 'freertos'
+    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/3.0/PATH;downloadfilename=PATH;downloadfilename=PATH'
+    MACHINE: 'qemuarmv5'
+    DEPLOY_ARTIFACTS_DIR: '/mnt/deploydir/'
+    DL_DIR: '/mnt/downloads/'
+    SSTATE_DIR: '/home/vsts/sstate-cache/'
+
+jobs:
+  - template: templates/build.yml
+    parameters:
+      pool:
+        vmImage: 'ubuntu-18.04'
+      buildtype: 'freertos'
+      machine: 'qemuarmv5'
+
+  # Older branches do not have multiconfig builds enabled by default
+  # - template: templates/build.yml
+  #   parameters:
+  #     pool:
+  #       vmImage: 'ubuntu-18.04'
+  #     buildtype: 'poky'
+  #     machine: 'qemuarmv5'
