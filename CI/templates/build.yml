@@ -1,0 +1,18 @@
+parameters:
+    pool: ''
+    machine: ''
+    buildtype: ''
+
+jobs:
+- job: ${{ parameters.machine }}_${{ parameters.buildtype }}
+  pool: ${{ parameters.pool }}
+  timeoutInMinutes: 0
+
+  steps:
+  - template: steps_setup.yml
+    parameters:
+      machine: ${{ parameters.machine }}
+      build_branch: $(Build.SourceBranchName)
+  - template: steps_build.yml
+    parameters:
+      buildtype: ${{ parameters.buildtype }}
