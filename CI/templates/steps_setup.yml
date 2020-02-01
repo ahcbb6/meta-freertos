@@ -16,23 +16,23 @@ steps:
   displayName: 'Create build configuration'
 - bash: |
     # Since we'll be upgrading later, we need to remove anything we dont want so we dont upgrade it either
-    sudo apt update
-    sudo apt purge -yq ghc-\* hhvm zulu-\* google-chrome-stable firefox google-cloud-sdk dotnet\* openjdk-11-jre-headless \
+    sudo DEBIAN_FRONTEND=noninteractive apt update
+    sudo DEBIAN_FRONTEND=noninteractive apt purge -yq ghc-\* hhvm zulu-\* google-chrome-stable firefox google-cloud-sdk dotnet\* openjdk-11-jre-headless \
     mono\* php\* aspnetcore\* ubuntu-mono llvm\* moby\* ansible clang\* cabal\* \*\-icon-theme sphinxsearch \
     poppler-data heroku samba\* powershell snapd libclang\* libicu\* liblldb\* vim\* \
     \*doc\* man\* *\apache\* *\node\* \*yarn\* \*iso-codes\* \*kubectl\* \*linux-azure-headers\* \
     \*shellcheck\* \*mercurial-common\* \*cmake\* fonts-dejavu-core* fonts-droid-fallback* \
     fonts-noto-mono* fonts-ubuntu-console* gsfonts* >/dev/null
     # These have to be removed in a different step due to dependency issues
-    sudo apt purge -yq libllvm\* >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt purge -yq libllvm\* >/dev/null
     sudo DEBIAN_FRONTEND=noninteractive apt -yq remove --purge mysql\* >/dev/null
     sudo DEBIAN_FRONTEND=noninteractive apt -yq remove --purge dbconfig-mysql\* >/dev/null
     # Tools to debug space usage
     sudo DEBIAN_FRONTEND=noninteractive apt -yq install durep wajig >/dev/null
     # Remove unneeded dependencies leftover
-    sudo apt autoremove --purge >/dev/null
-    sudo apt autoclean >/dev/null
-    sudo apt clean >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt autoremove --purge >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt autoclean >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt clean >/dev/null
     if [ "${DEBUG_PIPE}" == "1" ]; then
       wajig large
       df -h
@@ -42,12 +42,12 @@ steps:
 
 - bash: |
     # Make sure we still have add-apt-repository
-    sudo apt install software-properties-common
+    sudo DEBIAN_FRONTEND=noninteractive apt install software-properties-common
     sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-    sudo apt update
-    sudo apt upgrade
+    sudo DEBIAN_FRONTEND=noninteractive apt update
+    sudo DEBIAN_FRONTEND=noninteractive apt upgrade
     # Dependencies from the Yocto Quickstart
-    until sudo apt install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+    until sudo DEBIAN_FRONTEND=noninteractive apt install gawk wget git-core diffstat unzip texinfo gcc-multilib \
     build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
     xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
     pylint3 xterm
@@ -59,7 +59,7 @@ steps:
   displayName: 'Upgrade and install dependencies'
 
 - bash: |
-    until sudo apt install gcc-9 g++-9
+    until sudo DEBIAN_FRONTEND=noninteractive apt install gcc-9 g++-9
     do
       echo "Failed updating, trying again..."
       sleep 1
@@ -72,11 +72,11 @@ steps:
       echo "Free space before"
       df -h
     fi
-    sudo apt autoremove --purge
-    sudo apt autoclean
-    sudo apt clean
-    sudo apt-get clean
-    sudo apt-get autoclean
+    sudo DEBIAN_FRONTEND=noninteractive apt autoremove --purge
+    sudo DEBIAN_FRONTEND=noninteractive apt autoclean
+    sudo DEBIAN_FRONTEND=noninteractive apt clean
+    sudo DEBIAN_FRONTEND=noninteractive apt-get clean
+    sudo DEBIAN_FRONTEND=noninteractive apt-get autoclean
     if [ "${DEBUG_PIPE}" == "1" ]; then
       echo "Free space after"
       df -h
