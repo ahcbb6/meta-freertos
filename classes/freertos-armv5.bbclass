@@ -38,3 +38,6 @@ EXTRA_OEMAKE_append = " PORT=ARM926EJ-S"
 QB_SYSTEM_NAME = "qemu-system-arm"
 QB_MACHINE = "-M versatilepb"
 QB_DTB = ""
+
+# Only create one serial console, so QEMUrunner can communicate with the target
+SERIAL_CONSOLES="115200;ttyAMA0"
