@@ -128,3 +128,6 @@ TESTIMAGE_BOOT_PATTERNS[search_login_succeeded] = "You entered"
 # Use the string Unblocked to check if the "command" finished, in the Linux case this should look for a prompt
 # In our case, this checks if the task has been Unblocked which is printed on the serial console after a command
 TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] = "Unblocked"
+
+# We have to do = otherwise it tries to run the Linux tests from OpenEmbedded
+TEST_SUITES = "freertos_echo"
