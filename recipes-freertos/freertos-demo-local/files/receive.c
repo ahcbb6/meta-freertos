@@ -53,9 +53,9 @@ extern TaskHandle_t thandle_woken;
 
 
 /* This string is displayed first when Enter is pressed: */
-#define MSG_TEXT            "You entered: \""
+#define MSG_TEXT            "You entered: "
 /* Hardcoded strlen(MSG_TEXT): */
-#define MSG_OFFSET          ( 14 )
+#define MSG_OFFSET          ( 12 )
 /*
  * Total length of a string buffer:
  * MSG_OFFSET + RECV_BUFFER_SIZE + additional 4 characters for "\"\r\n\0"
@@ -291,11 +291,13 @@ void recvTask(void* params)
             }
 
             /* 'Enter' a.k.a. Carriage Return (CR): */
+            /* Add ~ as a special character to use as a valid result of a test case*/
             case CODE_CR :
+            case '~' :
             {
                 /* Append characters to terminate the string:*/
                 bufPos += MSG_OFFSET;
-                buf[bufCntr][bufPos++] = '"';
+                buf[bufCntr][bufPos++] = ch;
                 buf[bufCntr][bufPos++] = '\r';
                 buf[bufCntr][bufPos++] = '\n';
                 buf[bufCntr][bufPos]   = '\0';
