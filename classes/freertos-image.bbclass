@@ -115,6 +115,7 @@ python(){
                 deps += " %s:%s" % (dep, task)
         return deps
     d.appendVarFlag('do_image', 'depends', extraimage_getdepends('do_addto_recipe_sysroot'))
+    d.appendVarFlag('do_image', 'depends', extraimage_getdepends('do_populate_sysroot'))
 }
 
 # Add boot patterns to use with OE testimage infrastructure with the serial console
