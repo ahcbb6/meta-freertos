@@ -9,7 +9,7 @@ SRC_URI += " \
 "
 
 SRCREV_FORMAT = "freertos_bsp_app"
-SRCREV_app = "5353ca1b308210b73c2cb4573eb2d02904c96622"
+SRCREV_app = "af7c1b0cfcee98548f52ae5b1630b1251e9bd307"
 
 
 EXTRA_OEMAKE += "APP_SRC=../app/Demo/ 'STAGING_LIBDIR=${STAGING_LIBDIR}'"
