@@ -1,6 +1,7 @@
 trigger:
 - master
 - master-next
+- dunfell
 - zeus
 - warrior
 
@@ -10,6 +11,7 @@ schedules:
   branches:
     include:
     - master
+    - dunfell
     - zeus
     - warrior
   always: true

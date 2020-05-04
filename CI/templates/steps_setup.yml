@@ -1,6 +1,9 @@
 steps:
 - bash: |
-    if [ ${{ parameters.build_branch }} == "zeus" ]; then
+    if [ ${{ parameters.build_branch }} == "dunfell" ]; then
+      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/dunfell"
+      echo "##vso[task.setvariable variable=branchname;]dunfell"
+    elif [ ${{ parameters.build_branch }} == "zeus" ]; then
       echo "##vso[task.setvariable variable=buildbranch;]refs/heads/zeus"
       echo "##vso[task.setvariable variable=branchname;]zeus"
     elif [ ${{ parameters.build_branch }} == "warrior" ]; then
