@@ -33,7 +33,7 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 
 ## FreeRTOS build setup
 
-1.- Clone the required repositories (Use -b zeus if you want a stable release)
+1.- Clone the required repositories (Use -b dunfell if you want a stable release)
 ```bash
 $ git clone https://git.yoctoproject.org/git/poky
 $ cd poky
