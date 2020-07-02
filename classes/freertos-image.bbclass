@@ -34,9 +34,7 @@ PV = "${FREERTOS_VERSION}+git${SRCPV}"
 FREERTOS_KERNEL_SRC = "${WORKDIR}/freertos/freertos_kernel/"
 
 inherit rootfs-postcommands
-inherit deploy
 IMGDEPLOYDIR ?= "${WORKDIR}/deploy-${PN}-image-complete"
-do_deploy[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 DEPLOYDIR = "${IMGDEPLOYDIR}"
 do_rootfs[dirs] = "${DEPLOYDIR} ${DEPLOY_DIR_IMAGE}"
 IMAGE_LINK_NAME ?= "freertos-image-${MACHINE}"
@@ -61,12 +59,12 @@ do_install(){
   install -m 755 ${B}/image.elf ${D}/image.elf
 }
 
-do_deploy(){
+do_image(){
   install ${D}/image.bin ${DEPLOYDIR}/${IMAGE_LINK_NAME}.bin
   install ${D}/image.elf ${DEPLOYDIR}/${IMAGE_LINK_NAME}.elf
 }
 
-do_image(){
+do_image_complete(){
 :
 }
 
@@ -96,11 +94,26 @@ QB_MEM = "-m 128"
 QB_OPT_APPEND = "-nographic"
 QB_DEFAULT_FSTYPE = "bin"
 
+# Assure binaries, manifest and qemubootconf are populated on DEPLOY_DIR_IMAGE
+do_image_complete[dirs] = "${TOPDIR}"
+do_image_complete[umask] = "022"
+SSTATETASKS += "do_image_complete"
+SSTATE_SKIP_CREATION_task-image-complete = '1'
+do_image_complete[sstate-inputdirs] = "${IMGDEPLOYDIR}"
+do_image_complete[sstate-outputdirs] = "${DEPLOY_DIR_IMAGE}"
+do_image_complete[stamp-extra-info] = "${MACHINE_ARCH}"
+addtask do_image_complete after do_image before do_build
+
+python do_image_complete_setscene () {
+    sstate_setscene(d)
+}
+addtask do_image_complete_setscene
+
 # This next part is necessary to trick the build system into thinking
 # its building an image recipe so it generates the qemuboot.conf
-addtask do_deploy after do_write_qemuboot_conf before do_build
-addtask do_rootfs before do_deploy after do_install
+addtask do_rootfs before do_image after do_install
 addtask do_image after do_rootfs before do_build
+addtask do_image_complete after do_image before do_build
 inherit qemuboot
 
 
