@@ -45,9 +45,9 @@ steps:
 
 - bash: |
     # Make sure we still have add-apt-repository
-    sudo DEBIAN_FRONTEND=noninteractive apt install software-properties-common
-    sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-    sudo DEBIAN_FRONTEND=noninteractive apt update
+    # sudo DEBIAN_FRONTEND=noninteractive apt install software-properties-common
+    # sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+    # sudo DEBIAN_FRONTEND=noninteractive apt update
     sudo DEBIAN_FRONTEND=noninteractive apt upgrade
     # Dependencies from the Yocto Quickstart
     until sudo DEBIAN_FRONTEND=noninteractive apt install gawk wget git-core diffstat unzip texinfo gcc-multilib \
