@@ -18,7 +18,7 @@ schedules:
 
 variables:
     DISTRO: 'freertos'
-    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/3.0/PATH;downloadfilename=PATH;downloadfilename=PATH'
+    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/dev/PATH;downloadfilename=PATH;'
     MACHINE: 'qemuarmv5'
     DEPLOY_ARTIFACTS_DIR: '/mnt/deploydir/'
     DL_DIR: '/home/vsts/downloads/'

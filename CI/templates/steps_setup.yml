@@ -145,6 +145,7 @@ steps:
     echo "Creating proper bblayers.conf"
     cd ~/poky
     source oe-init-build-env
+    echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf
     echo "SSTATE_DIR = \"${SSTATE_DIR}\"" >> ./conf/local.conf
     echo "DL_DIR = \"${DL_DIR}\"" >> ./conf/local.conf
     echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf
