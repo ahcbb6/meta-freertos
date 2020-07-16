@@ -28,13 +28,13 @@ jobs:
   - template: templates/build.yml
     parameters:
       pool:
-        vmImage: 'ubuntu-18.04'
+        vmImage: 'ubuntu-20.04'
       buildtype: 'freertos'
       machine: 'qemuarmv5'
 
   - template: templates/build.yml
     parameters:
       pool:
-        vmImage: 'ubuntu-18.04'
+        vmImage: 'ubuntu-20.04'
       buildtype: 'poky'
       machine: 'qemuarmv5'
