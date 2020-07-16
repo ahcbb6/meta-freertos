@@ -74,6 +74,7 @@ steps:
     if [ "${DEBUG_PIPE}" == "1" ]; then
       echo "Free space before"
       df -h
+      free -h
     fi
     sudo DEBIAN_FRONTEND=noninteractive apt autoremove --purge
     sudo DEBIAN_FRONTEND=noninteractive apt autoclean
@@ -110,13 +111,14 @@ steps:
     "
     # This cant be done in parallel
     for i in ${TOFREE};do sudo rm -rf $i; done;
+    # Swap is now 4G at  /mnt/swapfile, keep the following in case we need it later though
     # Create a smaller swapfile to save space
-    sudo swapoff /swapfile
-    sudo rm -rf /swapfile
-    sudo fallocate -l 4G /swapfile
-    sudo chmod 600 /swapfile
-    sudo mkswap /swapfile
-    sudo swapon /swapfile
+    # sudo swapoff /mnt/swapfile
+    # sudo rm -rf /swapfile
+    # sudo fallocate -l 4G /swapfile
+    # sudo chmod 600 /swapfile
+    # sudo mkswap /swapfile
+    # sudo swapon /swapfile
     if [ "${DEBUG_PIPE}" == "1" ]; then
       df -h
       du -Sh / 2>/dev/null | sort -rh | head -n 200
