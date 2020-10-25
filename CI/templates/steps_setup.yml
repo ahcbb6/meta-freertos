@@ -3,12 +3,9 @@ steps:
     if [ ${{ parameters.build_branch }} == "dunfell" ]; then
       echo "##vso[task.setvariable variable=buildbranch;]refs/heads/dunfell"
       echo "##vso[task.setvariable variable=branchname;]dunfell"
-    elif [ ${{ parameters.build_branch }} == "zeus" ]; then
-      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/zeus"
-      echo "##vso[task.setvariable variable=branchname;]zeus"
-    elif [ ${{ parameters.build_branch }} == "warrior" ]; then
-      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/warrior"
-      echo "##vso[task.setvariable variable=branchname;]warrior"
+    elif [ ${{ parameters.build_branch }} == "gatesgarth" ]; then
+      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/gatesgarth"
+      echo "##vso[task.setvariable variable=branchname;]gatesgarth"
     else
       echo "##vso[task.setvariable variable=buildbranch;]refs/heads/master"
       echo "##vso[task.setvariable variable=branchname;]master"

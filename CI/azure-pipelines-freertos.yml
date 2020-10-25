@@ -2,8 +2,6 @@ trigger:
 - master
 - master-next
 - dunfell
-- zeus
-- warrior
 
 schedules:
 - cron: "0 12 * * *"
@@ -12,8 +10,6 @@ schedules:
     include:
     - master
     - dunfell
-    - zeus
-    - warrior
   always: true
 
 variables:
