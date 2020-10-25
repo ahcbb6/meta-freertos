@@ -6,17 +6,13 @@ FreeRTOS distro layer compatible with OpenEmbedded
 | master  | [![Build Status][masterbadge]][masterpipeline]   |
 |:-------:|--------------------------------------------------|
 | dunfell | [![Build Status][dunfellbadge]][dunfellpipeline] |
-| zeus    | [![Build Status][zeusbadge]][zeuspipeline]       |
-| warrior | [![Build Status][warriorbadge]][warriorpipeline] |
+
 
 [masterbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
 [masterpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=master
 [dunfellbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=dunfell
 [dunfellpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=dunfell
-[zeusbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=zeus
-[zeuspipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=zeus
-[warriorbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=warrior
-[warriorpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=warrior
+
 
 ## Dependencies
 
