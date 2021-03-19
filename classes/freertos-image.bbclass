@@ -13,25 +13,26 @@
 # And we get the app code from a different repo (app recipe)
 
 # FreeRTOS kernel version (FreeRTOS.h)
-FREERTOS_VERSION = "FreeRTOSv10.2.1"
+FREERTOS_VERSION = "FreeRTOSv10.4.3"
+SRCBRANCH = "202012-LTS"
 
 LICENSE = "MIT"
+
+# FreeRTOS License, careful here, the gitsm fetcher does not work properly with license checking
+# double check this manually after an upgrade
+LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=7ae2be7fb1637141840314b51970a9f7"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = " \
-    git://github.com/aws/amazon-freertos.git;name=freertos;destsuffix=freertos; \
+    gitsm://github.com/FreeRTOS/FreeRTOS-LTS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH} \
 "
 
 SRCREV_FORMAT ?= "freertos_bsp"
-
-# FreeRTOS License
-LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
-
-SRCREV_freertos ?= "5bee12b2cd5ddbf2c6b3bf394ea41649999a1453"
+SRCREV_freertos ?= "1bb18c8dfbf8f0445e873b20cec7d6091771f9e9"
 
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
-FREERTOS_KERNEL_SRC = "${WORKDIR}/freertos/freertos_kernel/"
+FREERTOS_KERNEL_SRC = "${WORKDIR}/freertos/FreeRTOS/FreeRTOS-Kernel/"
 
 inherit rootfs-postcommands
 IMGDEPLOYDIR ?= "${WORKDIR}/deploy-${PN}-image-complete"
