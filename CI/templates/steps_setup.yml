@@ -144,7 +144,6 @@ steps:
 
 - bash: |
     # Add layers and create local.conf
-    echo "Creating proper bblayers.conf"
     cd ~/poky
     source oe-init-build-env
     echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf
@@ -152,6 +151,8 @@ steps:
     echo "DL_DIR = \"${DL_DIR}\"" >> ./conf/local.conf
     echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf
     echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf
+
+    # Add meta-freertos layer to bblayers.conf
     bitbake-layers add-layer $(Build.SourcesDirectory)
 
     echo "bblayers.conf:"
