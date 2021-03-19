@@ -46,21 +46,6 @@ $ echo "MACHINE = \"qemuarmv5\"" >> ./conf/local.conf
 $ echo "DISTRO = \"freertos\"" >> ./conf/local.conf
 ```
 
-
-## Build Linux along with FreeRTOS (Linux on qemux86-64 and FreeRTOS on qemuarmv5):
-1.- Build Linux image and get a FreeRTOS demo for free!
-```bash
-$ bitbake mc:dummy-x86-64:core-image-minimal
-```
-2.- Run the FreeRTOS application on QEMU:
-```bash
-$ runqemu
-```
-3.- Run the Linux image on QEMU (Assuming you used the default settings):
-```bash
-$ runqemu nographic tmp-qemux86-64-glibc/deploy/images/qemux86-64/core-image-minimal-qemux86-64.qemuboot.conf
-```
-
 ## Build a FreeRTOS demo as a standalone application:
 4.- Build a sample FreeRTOS standalone application:
 ```bash
@@ -68,7 +53,7 @@ $ bitbake freertos-demo
 ```
 5.- Run the application on QEMU:
 ```bash
-$ runqemu
+$ runqemu nographic
 ```
 
 After running runqemu you should be able to see the output of the application on QEMU and interact with it.
@@ -88,4 +73,29 @@ You entered: "HelloFreeRTOS"
 Unblocked
 Notification Received
 Waiting For Notification - Blocked...
+```
+
+
+## Build Linux along with FreeRTOS (Linux on qemux86-64 and FreeRTOS on qemuarmv5):
+(First 3 steps still apply)
+
+4.- Enable multiconfig builds on your local.conf
+```bash
+$ echo "BBMULTICONFIG = \"dummy-x86-64\"" >> ./conf/local.conf
+```
+5.- Create a multiconfig dependency so freertos gets built automatically when building Linux
+```bash
+$ echo "do_image[mcdepends] = \"multiconfig:dummy-x86-64::freertos-demo-local:do_image\"" >> ./conf/local.conf
+```
+6.- Build Linux image and get a FreeRTOS demo for free!
+```bash
+$ bitbake mc:dummy-x86-64:core-image-minimal
+```
+7.- Run the FreeRTOS application on QEMU:
+```bash
+$ runqemu nographic
+```
+8.- Run the Linux image on QEMU (Assuming you used the default settings):
+```bash
+$ runqemu nographic tmp-qemux86-64-glibc/deploy/images/qemux86-64/core-image-minimal-qemux86-64.qemuboot.conf
 ```
