@@ -38,6 +38,7 @@ steps:
     displayName: 'Build freertos image'
 
 - bash: |
+    source azp-scripts/azp-helpers.sh
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
     # Kernel BIN
     mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.bin ${DEPLOY_ARTIFACTS_DIR}
