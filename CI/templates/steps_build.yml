@@ -39,6 +39,13 @@ steps:
 
 - bash: |
     source azp-scripts/azp-helpers.sh
+    check_freespace
+    SASW_TOKEN="$(SASW_TOKEN)" sync_sstate
+  condition: succeededOrFailed()
+  displayName: 'Sync sstate'
+
+- bash: |
+    source azp-scripts/azp-helpers.sh
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
     # Kernel BIN
     mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.bin ${DEPLOY_ARTIFACTS_DIR}
@@ -50,10 +57,3 @@ steps:
 
 - publish: $(DEPLOY_ARTIFACTS_DIR)
   artifact: $(DISTRO)-${{parameters.buildtype}}
-
-- bash: |
-    source azp-scripts/azp-helpers.sh
-    check_freespace
-    SASW_TOKEN="$(SASW_TOKEN)" sync_sstate
-  condition: succeededOrFailed()
-  displayName: 'Sync sstate'
