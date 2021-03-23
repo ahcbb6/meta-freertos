@@ -19,11 +19,11 @@ steps:
     chmod +x azp-scripts/azp-helpers.sh
     source azp-scripts/azp-helpers.sh
     # check_freespace
-    # free_space_packages
+    free_space_packages
     setup_yp_deps
     # check_freespace
     # analyze_storage
-    # cleanup_leftover_deps
+    cleanup_leftover_deps
     # purge_space
     create_local_dirs
   displayName: 'Setup container'

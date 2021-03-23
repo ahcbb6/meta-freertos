@@ -20,7 +20,7 @@ steps:
       tail -n 10 conf/local.conf
       bitbake mc:dummy-x86-64:core-image-minimal
     condition: succeededOrFailed()
-    displayName: 'Build FreeRTOS + Linux images for $(MACHINE)'
+    displayName: 'Build FreeRTOS + Linux images'
 
 - ${{ if eq(parameters.buildtype, 'freertos') }}:
   - bash: |
@@ -35,7 +35,7 @@ steps:
       tail -n 10 conf/local.conf
       bitbake freertos-demo
     condition: succeededOrFailed()
-    displayName: 'Build freertos image for $(MACHINE)'
+    displayName: 'Build freertos image'
 
 - bash: |
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
