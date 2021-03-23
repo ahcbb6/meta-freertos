@@ -1,161 +1,42 @@
 steps:
 - bash: |
-    if [ ${{ parameters.build_branch }} == "dunfell" ]; then
-      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/dunfell"
-      echo "##vso[task.setvariable variable=branchname;]dunfell"
-    elif [ ${{ parameters.build_branch }} == "gatesgarth" ]; then
-      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/gatesgarth"
-      echo "##vso[task.setvariable variable=branchname;]gatesgarth"
-    else
-      echo "##vso[task.setvariable variable=buildbranch;]refs/heads/master"
-      echo "##vso[task.setvariable variable=branchname;]master"
-    fi
-    if [ ${{ parameters.machine }} == "qemuarmv5" ]; then
-      echo "##vso[task.setvariable variable=machine;]qemuarmv5"
-    fi
-  displayName: 'Create build configuration'
-- bash: |
-    # Since we'll be upgrading later, we need to remove anything we dont want so we dont upgrade it either
-    sudo DEBIAN_FRONTEND=noninteractive apt update
-    sudo DEBIAN_FRONTEND=noninteractive apt purge google-chrome-stable firefox google-cloud-sdk heroku snapd bazel '?name(ghc.*)' \
-    '?name(llvm-8.*)' podman '?name(adoptopenjdk.*)' '?name(dotnet-sdk.*)' '?name(mysql.*)' '?name(mono.*)' '?name(moby.*)' \
-    hhvm ansible '?name(azure-cli.*)' '?name(llvm-9.*)' '?name(llvm-6.*)' '?name(dotnet-runtime.*)' '?name(libllvm8.*)' \
-    '?name(libllvm6.*)' '?name(libllvm8.*)' '?name(libllvm9.*)' '?name(libllvm8.*)' '?name(postgresql.*)' '?name(libclang-common-6.*)' \
-    '?name(libclang-common-8.*)' '?name(libclang-common-9.*)' '?name(libldb.*)' '?name(clang-6.*)' '?name(libicu.*)' \
-    '?name(cabal.*)' '?name(gcc-8.*)' '?name(g++-8-.*)' '?name(gcc-7.*)' '?name(g++-7.*)' '?name(cpp-7.*)' '?name(cpp-8.*)' \
-    '?name(gfortran.*)' '?name(buildah.*)' '?name(ruby2.*)' '?name(skopeo.*)' '?name(openjdk-11-jre-headless.*)' \
-    '?name(vim.*)' '?name(mercurial.*)' \
-    linux-azure-tools-5.4.0-1019 linux-modules-5.4.0-1019-azure linux-azure-headers-5.4.0-1019 > /dev/null
-    # Keep one version of azure stuff installed (newest)
-    # Remove unneeded dependencies leftover
-    sudo DEBIAN_FRONTEND=noninteractive apt autoremove --purge >/dev/null
-    sudo DEBIAN_FRONTEND=noninteractive apt autoclean >/dev/null
-    sudo DEBIAN_FRONTEND=noninteractive apt clean >/dev/null
-    if [ "${DEBUG_PIPE}" == "1" ]; then
-      # Tools to debug space usage
-      sudo DEBIAN_FRONTEND=noninteractive apt -yq install durep wajig >/dev/null
-      wajig large
-      df -h
-    fi
-  displayName: 'Clean up container packages'
+    ###
+    ###  Set MACHINE
+    ###
+    case ${{ parameters.machine }} in
+        qemuarmv5 )
+            echo "##vso[task.setvariable variable=machine;]qemuarmv5"
+            ;;
+        *)
+            echo "Unknown MACHINE requested"
+            exit 1
+            ;;
+    esac
 
+    #  Set default deploy directory for artifacts
+    echo "##vso[task.setvariable variable=DEPLOY_ARTIFACTS_DIR;]/mnt/deploydir/"
+  displayName: 'Set global variables'
 
 - bash: |
-    # Make sure we still have add-apt-repository
-    # sudo DEBIAN_FRONTEND=noninteractive apt install software-properties-common
-    # sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-    # sudo DEBIAN_FRONTEND=noninteractive apt update
-    sudo DEBIAN_FRONTEND=noninteractive apt upgrade
-    # Dependencies from the Yocto Quickstart
-    until sudo DEBIAN_FRONTEND=noninteractive apt install gawk wget git-core diffstat unzip texinfo gcc-multilib \
-    build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
-    xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
-    pylint3 xterm
-    do
-      echo "Failed updating, trying again..."
-      sleep 1
-    done
-  continueOnError: false
-  displayName: 'Upgrade and install dependencies'
+    git clone https://www.github.com/aehs29/azp-scripts/
+    chmod +x azp-scripts/azp-helpers.sh
+    source azp-scripts/azp-helpers.sh
+    free_space_packages
+    setup_yp_deps
+    cleanup_leftover_deps
+    purge_space
+    create_local_dirs
+  displayName: 'Setup container'
 
 - bash: |
-    # until sudo DEBIAN_FRONTEND=noninteractive apt install gcc-9 g++-9
-    # do
-    #   echo "Failed updating, trying again..."
-    #   sleep 1
-    # done
-    # sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 --slave /usr/bin/g++ g++ /usr/bin/g++-9 --slave /usr/bin/gcov gcov /usr/bin/gcov-9
-    echo "GCC is already up to date"
-  displayName: 'Install Newer GCC'
-
-- bash: |
-    if [ "${DEBUG_PIPE}" == "1" ]; then
-      echo "Free space before"
-      df -h
-      free -h
-    fi
-    sudo DEBIAN_FRONTEND=noninteractive apt autoremove --purge
-    sudo DEBIAN_FRONTEND=noninteractive apt autoclean
-    sudo DEBIAN_FRONTEND=noninteractive apt clean
-    sudo DEBIAN_FRONTEND=noninteractive apt-get clean
-    sudo DEBIAN_FRONTEND=noninteractive apt-get autoclean
-    if [ "${DEBUG_PIPE}" == "1" ]; then
-      echo "Free space after"
-      df -h
-    fi
-  displayName: 'Clean up leftover dependencies'
-
-- bash: |
-    if [ "${DEBUG_PIPE}" == "1" ]; then
-      echo "Debug variables:"
-      echo Build.SourceBranch $(Build.SourceBranch)
-      echo Build.SourceBranchName $(Build.SourceBranchName)
-      echo "Free space before"
-      df -h
-      echo "Freeing up disk space"
-    fi
-    # There are a lot of tools that we dont need inside the container
-    export TOFREE="/usr/share/dotnet /usr/share/rust /usr/local/go* /usr/lib/jvm \
-    /usr/local/lib/android/  /usr/lib/google-cloud-sdk /opt/* /var/cache/apt/ /var/lib/apt/lists \
-    /usr/lib/firefox /usr/share/gradle* /usr/share/miniconda/ \
-    /usr/share/icons/ /usr/share/man /usr/share/docs \
-    /usr/lib/mono /usr/lib/monodoc /usr/lib/php* /usr/lib/heroku /usr/lib/cgi-bin \
-    /usr/share/apache-maven-3.6.2/ \
-    /home/vsts/agents/*.tgz /home/vsts/agents/2.150.3/ \
-    /home/vsts/agents/2.162.0/ /home/vsts/agents/2.160.1/ /home/vsts/agents/2.152.1/ /home/vsts/agents/2.152.0/ \
-    /usr/share/az_2.3* /usr/share/az_1* \
-    /usr/local/n/ /usr/local/lib/node* /usr/local/share/ /usr/local/bin/ \
-    /usr/libx32/gconv /usr/lib32/gconv /usr/share/swift/ /usr/local/julia1.4.2/ \
-    /home/vsts/agents/2.171.1/ /usr/local/aws-cli/ /usr/local/doc/  /home/linuxbrew/.linuxbrew/ \
-    /usr/share/doc/ /usr/share/vim/
-    "
-    # This cant be done in parallel
-    for i in ${TOFREE};do sudo rm -rf $i; done;
-    # Swap is now 4G at  /mnt/swapfile, keep the following in case we need it later though
-    # Create a smaller swapfile to save space
-    # sudo swapoff /mnt/swapfile
-    # sudo rm -rf /swapfile
-    # sudo fallocate -l 4G /swapfile
-    # sudo chmod 600 /swapfile
-    # sudo mkswap /swapfile
-    # sudo swapon /swapfile
-    if [ "${DEBUG_PIPE}" == "1" ]; then
-      df -h
-      du -Sh / 2>/dev/null | sort -rh | head -n 200
-      du -akS -d 4  / 2>/dev/null | sort -n -r | head -n 50
-      durep -td 3
-      echo "Creating downloads and sstate directories"
-    fi
-    sudo mkdir $(DL_DIR)
-    sudo mkdir $(SSTATE_DIR)
-    sudo mkdir $(DEPLOY_ARTIFACTS_DIR)
-    sudo chown vsts:vsts $(SSTATE_DIR)
-    sudo chown vsts:vsts $(DL_DIR)
-    sudo chown vsts:vsts ${DEPLOY_ARTIFACTS_DIR}
-  displayName: 'Purge container'
-
-- bash: |
-    cd ~/
-    echo "Cloning Yocto Project"
-    echo "Building Yocto branch: ${BRANCHNAME}"
-    git clone git://git.yoctoproject.org/poky -b ${BRANCHNAME}
+    source azp-scripts/azp-helpers.sh
+    BRANCH=${{ parameters.build_branch }} clone_layers poky
   continueOnError: false
   displayName: 'Clone Repositories'
 
 - bash: |
-    # Add layers and create local.conf
-    cd ~/poky
-    source oe-init-build-env
-    echo "SSTATE_MIRRORS = \"${SSTATE_MIRRORS}\"" >> ./conf/local.conf
-    echo "SSTATE_DIR = \"${SSTATE_DIR}\"" >> ./conf/local.conf
-    echo "DL_DIR = \"${DL_DIR}\"" >> ./conf/local.conf
-    echo "MACHINE = \"${MACHINE}\"" >> ./conf/local.conf
-    echo "DISTRO = \"${DISTRO}\"" >> ./conf/local.conf
-
-    # Add meta-freertos layer to bblayers.conf
-    bitbake-layers add-layer $(Build.SourcesDirectory)
-
-    echo "bblayers.conf:"
-    cat conf/bblayers.conf
+    source azp-scripts/azp-helpers.sh
+    DISTRO="freertos" AZ_SAS="$(SAS_TOKEN)" RMWORK="0" localconf
+    SELF="$(Build.SourcesDirectory)" add_layers
   continueOnError: false
   displayName: 'Create bitbake configuration'
