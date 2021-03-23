@@ -1,6 +1,4 @@
 parameters:
-  build_branch: 'master'
-  machine: ''
   buildtype: ''
 
 steps:
@@ -20,7 +18,7 @@ steps:
       tail -n 10 conf/local.conf
       bitbake mc:dummy-x86-64:core-image-minimal
     condition: succeededOrFailed()
-    displayName: 'Build FreeRTOS + Linux images for $(MACHINE)'
+    displayName: 'Build FreeRTOS + Linux images'
 
 - ${{ if eq(parameters.buildtype, 'freertos') }}:
   - bash: |
@@ -28,18 +26,24 @@ steps:
       cd ~/poky
       source oe-init-build-env
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
+
+      # Disable shared sstate for baremetal build
+      echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
       echo "Building with the following configuration:"
       tail -n 10 conf/local.conf
       bitbake freertos-demo
     condition: succeededOrFailed()
-    displayName: 'Build freertos image for $(MACHINE)'
+    displayName: 'Build freertos image'
 
 - bash: |
-    df -h
+    source azp-scripts/azp-helpers.sh
+    check_freespace
+    SASW_TOKEN="$(SASW_TOKEN)" sync_sstate
   condition: succeededOrFailed()
-  displayName: 'Check space after build'
+  displayName: 'Sync sstate'
 
 - bash: |
+    source azp-scripts/azp-helpers.sh
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
     # Kernel BIN
     mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.bin ${DEPLOY_ARTIFACTS_DIR}
@@ -47,7 +51,7 @@ steps:
     mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.elf ${DEPLOY_ARTIFACTS_DIR}
     # QEMUboot
     mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo-*${MACHINE}-*.qemuboot.conf ${DEPLOY_ARTIFACTS_DIR}
-  displayName: 'Moving Artifacts - $(MACHINE) - $(DISTRO)'
+  displayName: 'Moving Artifacts - $(MACHINE)'
 
 - publish: $(DEPLOY_ARTIFACTS_DIR)
-  artifact: $(DISTRO)-${{parameters.buildtype}}
+  artifact: $(MACHINE)-${{parameters.buildtype}}

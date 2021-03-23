@@ -2,6 +2,7 @@ parameters:
     pool: ''
     machine: ''
     buildtype: ''
+    build_branch: ''
 
 jobs:
 - job: ${{ parameters.machine }}_${{ parameters.buildtype }}

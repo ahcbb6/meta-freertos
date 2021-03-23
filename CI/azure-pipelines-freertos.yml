@@ -12,25 +12,25 @@ schedules:
     - dunfell
   always: true
 
-variables:
-    DISTRO: 'freertos'
-    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/dev/PATH;downloadfilename=PATH;'
-    MACHINE: 'qemuarmv5'
-    DEPLOY_ARTIFACTS_DIR: '/mnt/deploydir/'
-    DL_DIR: '/home/vsts/downloads/'
-    SSTATE_DIR: '/home/vsts/sstate-cache/'
+stages:
+- stage: freertos
+  displayName: freeRTOS
+  dependsOn: []
+  jobs:
+    - template: templates/build.yml
+      parameters:
+        pool:
+          vmImage: 'ubuntu-20.04'
+        machine: 'qemuarmv5'
+        buildtype: 'freertos'
 
-jobs:
-  - template: templates/build.yml
-    parameters:
-      pool:
-        vmImage: 'ubuntu-20.04'
-      buildtype: 'freertos'
-      machine: 'qemuarmv5'
-
-  - template: templates/build.yml
-    parameters:
-      pool:
-        vmImage: 'ubuntu-20.04'
-      buildtype: 'poky'
-      machine: 'qemuarmv5'
+- stage: multiconf
+  displayName: LinuxFreeRTOS
+  dependsOn: []
+  jobs:
+    - template: templates/build.yml
+      parameters:
+        pool:
+          vmImage: 'ubuntu-20.04'
+        machine: 'qemuarmv5'
+        buildtype: 'poky'
