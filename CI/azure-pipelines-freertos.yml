@@ -12,14 +12,6 @@ schedules:
     - dunfell
   always: true
 
-variables:
-    DISTRO: 'freertos'
-    SSTATE_MIRRORS: 'file://.* http://sstate.yoctoproject.org/dev/PATH;downloadfilename=PATH;'
-    MACHINE: 'qemuarmv5'
-    DEPLOY_ARTIFACTS_DIR: '/mnt/deploydir/'
-    DL_DIR: '/home/vsts/downloads/'
-    SSTATE_DIR: '/home/vsts/sstate-cache/'
-
 jobs:
   - template: templates/build.yml
     parameters:

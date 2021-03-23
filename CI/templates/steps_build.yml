@@ -28,16 +28,14 @@ steps:
       cd ~/poky
       source oe-init-build-env
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
+
+      # Disable shared sstate for baremetal build
+      echo "AZ_SAS=\"\"" >> ./conf/local.conf
       echo "Building with the following configuration:"
       tail -n 10 conf/local.conf
       bitbake freertos-demo
     condition: succeededOrFailed()
     displayName: 'Build freertos image for $(MACHINE)'
-
-- bash: |
-    df -h
-  condition: succeededOrFailed()
-  displayName: 'Check space after build'
 
 - bash: |
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
@@ -51,3 +49,10 @@ steps:
 
 - publish: $(DEPLOY_ARTIFACTS_DIR)
   artifact: $(DISTRO)-${{parameters.buildtype}}
+
+- bash: |
+    source azp-scripts/azp-helpers.sh
+    check_freespace
+    SASW_TOKEN="$(SASW_TOKEN)" sync_sstate
+  condition: succeededOrFailed()
+  displayName: 'Sync sstate'
