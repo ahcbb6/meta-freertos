@@ -141,14 +141,14 @@ python(){
 # Add boot patterns to use with OE testimage infrastructure with the serial console
 TESTIMAGE_BOOT_PATTERNS = "search_reached_prompt send_login_user search_login_succeeded search_cmd_finished"
 # Look for FreeRTOS to check when the device has booted
-TESTIMAGE_BOOT_PATTERNS[search_reached_prompt] = " FreeRTOS"
+TESTIMAGE_BOOT_PATTERNS[search_reached_prompt] ?= " FreeRTOS"
 # Use carriage return as the user to "log in"
-TESTIMAGE_BOOT_PATTERNS[send_login_user] = "\r"
+TESTIMAGE_BOOT_PATTERNS[send_login_user] ?= "\r"
 # Use the string You entered to check if the "log in" was successful (which is what would be printed afterwards)
-TESTIMAGE_BOOT_PATTERNS[search_login_succeeded] = "You entered"
+TESTIMAGE_BOOT_PATTERNS[search_login_succeeded] ?= "You entered"
 # Use the string Unblocked to check if the "command" finished, in the Linux case this should look for a prompt
 # In our case, this checks if the task has been Unblocked which is printed on the serial console after a command
-TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] = "Unblocked"
+TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] ?= "Unblocked"
 
 # We have to do = otherwise it tries to run the Linux tests from OpenEmbedded
-TEST_SUITES = "freertos_echo"
+TEST_SUITES ?= "freertos_echo"
