@@ -20,6 +20,20 @@ steps:
     condition: succeededOrFailed()
     displayName: 'Build FreeRTOS + Linux images'
 
+  - bash: |
+      echo "Testing FreeRTOS ${MACHINE}"
+      cd ~/poky
+      source oe-init-build-env
+
+      # Enable a testcase
+      echo "INHERIT += \"testimage\"" >> ./conf/local.conf
+      echo "TEST_SUITES = \"freertos_periodic\"" >> ./conf/local.conf
+      echo "TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] = \"secs\"" >> ./conf/local.conf
+
+      bitbake mc::freertos-demo-local -c testimage
+
+    displayName: 'Testing FreeRTOS Periodic'
+
 - ${{ if eq(parameters.buildtype, 'freertos') }}:
   - bash: |
       echo "Building FreeRTOS image for ${MACHINE}"
@@ -34,6 +48,18 @@ steps:
       bitbake freertos-demo
     condition: succeededOrFailed()
     displayName: 'Build freertos image'
+  - bash: |
+      echo "Testing FreeRTOS ${MACHINE}"
+      cd ~/poky
+      source oe-init-build-env
+
+      # Enable a testcase
+      echo "INHERIT += \"testimage\"" >> ./conf/local.conf
+      echo "TEST_SUITES = \"freertos_echo\"" >> ./conf/local.conf
+
+      bitbake freertos-demo -c testimage
+
+    displayName: 'Testing FreeRTOS Echo'
 
 - bash: |
     source azp-scripts/azp-helpers.sh
