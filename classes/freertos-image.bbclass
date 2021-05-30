@@ -75,8 +75,8 @@ inherit baremetal-image
 
 # Add boot patterns to use with OE testimage infrastructure with the serial console
 TESTIMAGE_BOOT_PATTERNS = "search_reached_prompt send_login_user search_login_succeeded search_cmd_finished"
-# Look for FreeRTOS to check when the device has booted
-TESTIMAGE_BOOT_PATTERNS[search_reached_prompt] ?= " FreeRTOS"
+# Look for Blocked... to check when the device has booted and its ready to receive an input
+TESTIMAGE_BOOT_PATTERNS[search_reached_prompt] ?= "Blocked..."
 # Use carriage return as the user to "log in"
 TESTIMAGE_BOOT_PATTERNS[send_login_user] ?= "\r"
 # Use the string You entered to check if the "log in" was successful (which is what would be printed afterwards)
