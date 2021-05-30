@@ -28,7 +28,6 @@ steps:
       # Enable a testcase
       echo "INHERIT += \"testimage\"" >> ./conf/local.conf
       echo "TEST_SUITES = \"freertos_periodic\"" >> ./conf/local.conf
-      echo "TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] = \"secs\"" >> ./conf/local.conf
 
       bitbake mc::freertos-demo-local -c testimage
 
