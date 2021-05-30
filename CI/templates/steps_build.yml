@@ -72,11 +72,11 @@ steps:
     source azp-scripts/azp-helpers.sh
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
     # Kernel BIN
-    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.bin ${DEPLOY_ARTIFACTS_DIR}
+    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image*.bin ${DEPLOY_ARTIFACTS_DIR}
     # Kernel ELF
-    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo*.elf ${DEPLOY_ARTIFACTS_DIR}
+    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image*.elf ${DEPLOY_ARTIFACTS_DIR}
     # QEMUboot
-    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-demo-*${MACHINE}-*.qemuboot.conf ${DEPLOY_ARTIFACTS_DIR}
+    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image-*${MACHINE}-*.qemuboot.conf ${DEPLOY_ARTIFACTS_DIR}
   displayName: 'Moving Artifacts - $(MACHINE)'
 
 - publish: $(DEPLOY_ARTIFACTS_DIR)

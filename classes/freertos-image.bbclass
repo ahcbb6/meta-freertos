@@ -34,8 +34,9 @@ PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
 FREERTOS_KERNEL_SRC = "${WORKDIR}/freertos/FreeRTOS/FreeRTOS-Kernel/"
 
-BAREMETAL_BINNAME ?= "freertos-image"
-IMAGE_LINK_NAME ?= "freertos-image-${MACHINE}"
+IMAGE_BASENAME = "freertos-image"
+BAREMETAL_BINNAME ?= "${IMAGE_BASENAME}"
+IMAGE_LINK_NAME ?= "${IMAGE_BASENAME}-${MACHINE}"
 
 
 # QEMU crashes when FreeRTOS is built with optimizations, disable those for now
