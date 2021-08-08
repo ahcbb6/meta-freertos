@@ -11,7 +11,7 @@ inherit freertos-image
 
 BSP_REPO ?= "../bsp"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp; \
 "
 
@@ -23,16 +23,16 @@ SRCREV_bsp ?= "fa926b03ad8f3469c22292c8f9bff9a03dbaf555"
 S="${WORKDIR}/bsp"
 
 
-do_configure_prepend(){
+do_configure:prepend(){
   # Copy portable code from bsp repo into FreeRTOS source code
   cp -r ${WORKDIR}/bsp/portable/GCC/ARM926EJ-S/ ${FREERTOS_KERNEL_SRC}/portable/GCC/ARM926EJ-S/
 }
 
 # CFLAGS required for this specific PORT
-CFLAGS_append = " -I${S}/drivers/include/"
+CFLAGS:append = " -I${S}/drivers/include/"
 
 # Define the PORT we are using
-EXTRA_OEMAKE_append = " PORT=ARM926EJ-S"
+EXTRA_OEMAKE:append = " PORT=ARM926EJ-S"
 
 # QEMU parameters specific for this PORT
 QB_SYSTEM_NAME = "qemu-system-arm"

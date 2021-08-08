@@ -21,7 +21,7 @@ LICENSE = "MIT"
 # FreeRTOS License, careful here, the gitsm fetcher does not work properly with license checking
 # double check this manually after an upgrade
 LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=7ae2be7fb1637141840314b51970a9f7"
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = " \
     gitsm://github.com/FreeRTOS/FreeRTOS-LTS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH} \
@@ -40,10 +40,10 @@ IMAGE_LINK_NAME ?= "${IMAGE_BASENAME}-${MACHINE}"
 
 
 # QEMU crashes when FreeRTOS is built with optimizations, disable those for now
-CFLAGS_remove = "-O2"
+CFLAGS:remove = "-O2"
 
 # Extra CFLAGS required for FreeRTOS include files
-CFLAGS_append = " -I${FREERTOS_KERNEL_SRC} -I${FREERTOS_KERNEL_SRC}/include/"
+CFLAGS:append = " -I${FREERTOS_KERNEL_SRC} -I${FREERTOS_KERNEL_SRC}/include/"
 
 # We need to define the FreeRTOS source code location, the port we'll be using
 # should be defined on the specific bsp class
@@ -60,7 +60,7 @@ do_install(){
 }
 
 
-FILES_${PN}_append = " \
+FILES:${PN}:append = " \
     ${base_libdir}/firmware/${BAREMETAL_BINNAME}.elf \
     ${base_libdir}/firmware/${BAREMETAL_BINNAME}.bin \
 "
