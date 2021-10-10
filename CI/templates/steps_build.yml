@@ -46,6 +46,7 @@ steps:
       echo "Building with the following configuration:"
       tail -n 10 conf/local.conf
       bitbake freertos-demo
+
     condition: succeededOrFailed()
     displayName: 'Build freertos image'
   - bash: |
@@ -64,9 +65,8 @@ steps:
 - bash: |
     source azp-scripts/azp-helpers.sh
     check_freespace
-    SASW_TOKEN="$(SASW_TOKEN)" sync_sstate
   condition: succeededOrFailed()
-  displayName: 'Sync sstate'
+  displayName: 'Post-build space check'
 
 - bash: |
     source azp-scripts/azp-helpers.sh
@@ -81,3 +81,7 @@ steps:
 
 - publish: $(DEPLOY_ARTIFACTS_DIR)
   artifact: $(MACHINE)-${{parameters.buildtype}}
+
+- publish: $(SSTATE_DIR)
+  artifact: 'SState-${{parameters.buildtype}}'
+  condition: succeededOrFailed()

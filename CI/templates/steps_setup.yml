@@ -1,7 +1,11 @@
 steps:
 - bash: |
+    git clone https://www.github.com/aehs29/azp-scripts/
+    chmod +x azp-scripts/azp-helpers.sh
+    source azp-scripts/azp-helpers.sh
+
     ###
-    ###  Set MACHINE
+    ###  Set global variables
     ###
     case ${{ parameters.machine }} in
         qemuarmv5 )
@@ -13,20 +17,29 @@ steps:
             ;;
     esac
 
-    #  Set default deploy directory for artifacts
-    echo "##vso[task.setvariable variable=DEPLOY_ARTIFACTS_DIR;]/mnt/deploydir/"
-  displayName: 'Set global variables'
+    echo "##vso[task.setvariable variable=buildbranch;]refs/heads/${{ parameters.build_branch }}"
 
-- bash: |
-    git clone https://www.github.com/aehs29/azp-scripts/
-    chmod +x azp-scripts/azp-helpers.sh
-    source azp-scripts/azp-helpers.sh
+    global_variables_pipeline
     free_space_packages
     setup_yp_deps
     cleanup_leftover_deps
     purge_space
     create_local_dirs
   displayName: 'Setup container'
+
+- task: DownloadPipelineArtifact@2
+  condition: succeededOrFailed()
+  continueOnError: true
+  inputs:
+    source: 'specific'
+    project: $(System.TeamProjectId)
+    pipeline: $(System.DefinitionId)
+    runVersion: 'latestFromBranch'
+    runBranch: $(BUILDBRANCH)
+    artifact: 'SState-${{parameters.buildtype}}'
+    targetPath: $(SSTATE_MIRRORS_DIR)
+    allowPartiallySucceededBuilds: true
+    allowFailedBuilds: true
 
 - bash: |
     source azp-scripts/azp-helpers.sh
@@ -36,7 +49,7 @@ steps:
 
 - bash: |
     source azp-scripts/azp-helpers.sh
-    DISTRO="freertos" AZ_SAS="$(SAS_TOKEN)" RMWORK="0" localconf
+    DISTRO="freertos" RMWORK="0" localconf
     SELF="$(Build.SourcesDirectory)" add_layers
   continueOnError: false
   displayName: 'Create bitbake configuration'
