@@ -11,7 +11,7 @@ steps:
       # Add additional dummy x86-64 multiconfig that builds Linux along with
       # a dependency to build for both architectures.
       echo "BBMULTICONFIG = \"dummy-x86-64\"" >> ./conf/local.conf
-      echo "do_image[mcdepends] = \"multiconfig:dummy-x86-64::freertos-demo-local:do_image\"" >> ./conf/local.conf
+      echo "do_image[mcdepends] = \"multiconfig:dummy-x86-64::freertos-demo-local:do_image_complete\"" >> ./conf/local.conf
 
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
       echo "Building with the following configuration:"
