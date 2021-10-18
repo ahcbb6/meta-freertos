@@ -16,7 +16,12 @@ steps:
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
       echo "Building with the following configuration:"
       tail -n 10 conf/local.conf
-      bitbake mc:dummy-x86-64:core-image-minimal
+      if [ -z "${BBTARGET}" ]; then
+          export BBTARGET="mc:dummy-x86-64:core-image-minimal"
+      fi
+      echo "Running cmd: bitbake ${BBTARGET}"
+      bitbake ${BBTARGET}
+
     condition: succeededOrFailed()
     displayName: 'Build FreeRTOS + Linux images'
 
@@ -44,7 +49,11 @@ steps:
       echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
       echo "Building with the following configuration:"
       tail -n 10 conf/local.conf
-      bitbake freertos-demo
+      if [ -z "${BBTARGET}" ]; then
+          export BBTARGET="freertos-demo"
+      fi
+      echo "Running cmd: bitbake ${BBTARGET}"
+      bitbake ${BBTARGET}
 
     condition: succeededOrFailed()
     displayName: 'Build freertos image'
