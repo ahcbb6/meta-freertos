@@ -12,7 +12,7 @@ inherit freertos-image
 BSP_REPO ?= "../bsp"
 
 SRC_URI:append = " \
-    git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp; \
+    git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=bsp;destsuffix=bsp;branch=aehs29/bsp;protocol=https \
 "
 
 # BSP repo License
