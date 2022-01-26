@@ -24,7 +24,7 @@ LIC_FILES_CHKSUM = "file://../freertos/LICENSE;md5=7ae2be7fb1637141840314b51970a
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = " \
-    gitsm://github.com/FreeRTOS/FreeRTOS-LTS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH} \
+    gitsm://github.com/FreeRTOS/FreeRTOS-LTS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH};protocol=https \
 "
 
 SRCREV_FORMAT ?= "freertos_bsp"
