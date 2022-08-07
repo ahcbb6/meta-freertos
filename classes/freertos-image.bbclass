@@ -28,7 +28,7 @@ SRC_URI = " \
 "
 
 SRCREV_FORMAT ?= "freertos_bsp"
-SRCREV_freertos ?= "1bb18c8dfbf8f0445e873b20cec7d6091771f9e9"
+SRCREV_freertos ?= "45db7b3ccda19847d836300de059582246901ab3"
 
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
