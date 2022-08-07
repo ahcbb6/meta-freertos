@@ -1,6 +1,7 @@
 trigger:
 - master
 - master-next
+- kirkstone
 - dunfell
 
 schedules:
@@ -9,6 +10,7 @@ schedules:
   branches:
     include:
     - master
+    - kirkstone
     - dunfell
   always: true
 

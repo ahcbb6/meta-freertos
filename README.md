@@ -5,11 +5,14 @@ FreeRTOS distro layer compatible with OpenEmbedded
 
 | master  | [![Build Status][masterbadge]][masterpipeline]   |
 |:-------:|--------------------------------------------------|
+| kirkstone | [![Build Status][kirkstonebadge]][kirkstonepipeline] |
 | dunfell | [![Build Status][dunfellbadge]][dunfellpipeline] |
 
 
 [masterbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
 [masterpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=master
+[kirkstonebadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=kirkstone
+[kirkstonepipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=kirkstone
 [dunfellbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=dunfell
 [dunfellpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=dunfell
 
@@ -29,7 +32,7 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 
 ## FreeRTOS build setup
 
-1.- Clone the required repositories (Use -b dunfell if you want a stable release)
+1.- Clone the required repositories (Use -b kirkstone if you want a stable release)
 ```bash
 $ git clone https://git.yoctoproject.org/git/poky
 $ cd poky
