@@ -31,7 +31,7 @@ steps:
       source oe-init-build-env
 
       # Enable a testcase
-      echo "INHERIT += \"testimage\"" >> ./conf/local.conf
+      echo "IMAGE_CLASSES += \"testimage\"" >> ./conf/local.conf
       echo "TEST_SUITES = \"freertos_periodic\"" >> ./conf/local.conf
 
       bitbake mc::freertos-demo-local -c testimage
@@ -63,7 +63,7 @@ steps:
       source oe-init-build-env
 
       # Enable a testcase
-      echo "INHERIT += \"testimage\"" >> ./conf/local.conf
+      echo "IMAGE_CLASSES += \"testimage\"" >> ./conf/local.conf
       echo "TEST_SUITES = \"freertos_echo\"" >> ./conf/local.conf
 
       bitbake freertos-demo -c testimage
