@@ -2,38 +2,6 @@ parameters:
   buildtype: ''
 
 steps:
-- ${{ if eq(parameters.buildtype, 'poky') }}:
-  - bash: |
-      echo "Building FreeRTOS image & Linux image for ${MACHINE}"
-      cd ~/poky
-      source oe-init-build-env
-
-      # Add additional dummy x86-64 multiconfig that builds Linux along with
-      # a dependency to build for both architectures.
-      echo "BBMULTICONFIG = \"dummy-x86-64\"" >> ./conf/local.conf
-      echo "do_image[mcdepends] = \"multiconfig:dummy-x86-64::freertos-demo-local:do_image_complete\"" >> ./conf/local.conf
-
-      echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
-      echo "Building with the following configuration:"
-      tail -n 10 conf/local.conf
-      bitbake mc:dummy-x86-64:core-image-minimal
-    condition: succeededOrFailed()
-    displayName: 'Build FreeRTOS + Linux images'
-
-  - bash: |
-      echo "Testing FreeRTOS ${MACHINE}"
-      cd ~/poky
-      source oe-init-build-env
-
-      # Enable a testcase
-      echo "INHERIT += \"testimage\"" >> ./conf/local.conf
-      echo "TEST_SUITES = \"freertos_periodic\"" >> ./conf/local.conf
-      echo "TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] = \"secs\"" >> ./conf/local.conf
-
-      bitbake mc::freertos-demo-local -c testimage
-
-    displayName: 'Testing FreeRTOS Periodic'
-
 - ${{ if eq(parameters.buildtype, 'freertos') }}:
   - bash: |
       echo "Building FreeRTOS image for ${MACHINE}"

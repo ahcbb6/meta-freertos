@@ -8,10 +8,10 @@ FreeRTOS distro layer compatible with OpenEmbedded
 | dunfell | [![Build Status][dunfellbadge]][dunfellpipeline] |
 
 
-[masterbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
-[masterpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=master
-[dunfellbadge]: https://dev.azure.com/aehs29/meta-freertos/_apis/build/status/FreeRTOS?branchName=dunfell
-[dunfellpipeline]: https://dev.azure.com/aehs29/meta-freertos/_build/latest?definitionId=9&branchName=dunfell
+[masterbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
+[masterpipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=master
+[dunfellbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=dunfell
+[dunfellpipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=dunfell
 
 
 ## Dependencies
@@ -33,7 +33,7 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 ```bash
 $ git clone https://git.yoctoproject.org/git/poky
 $ cd poky
-$ git clone https://github.com/aehs29/meta-freertos.git
+$ git clone https://github.com/ahcbb6/meta-freertos.git
 ```
 2.- Add meta-freertos to your bblayers.conf
 ```bash

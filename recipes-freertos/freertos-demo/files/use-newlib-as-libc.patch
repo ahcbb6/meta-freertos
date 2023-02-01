@@ -6,7 +6,7 @@ this.
 
 Upstream-Status: Inappropriate [oe-specific]
 
-Signed-off-by: Alejandro Hernandez <aehs29@gmail.com>
+Signed-off-by: Alejandro Hernandez <alejandro@enedino.org>
 
 Index: bsp/Makefile
 ===================================================================

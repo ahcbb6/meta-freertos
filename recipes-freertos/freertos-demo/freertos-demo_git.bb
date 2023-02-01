@@ -4,7 +4,7 @@ inherit freertos-armv5
 
 # App can be replaced by using a different repo
 SRC_URI += " \
-    git://github.com/aehs29/FreeRTOS-GCC-ARM926ejs.git;name=app;destsuffix=app;branch=aehs29/application; \
+    git://github.com/ahcbb6/FreeRTOS-GCC-ARM926ejs.git;name=app;destsuffix=app;branch=rtos-app;protocol=https \
     file://use-newlib-as-libc.patch \
 "
 
