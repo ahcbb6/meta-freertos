@@ -1,6 +1,6 @@
 steps:
 - bash: |
-    git clone https://www.github.com/aehs29/azp-scripts/
+    git clone https://www.github.com/ahcbb6/azp-scripts/
     chmod +x azp-scripts/azp-helpers.sh
     source azp-scripts/azp-helpers.sh
 

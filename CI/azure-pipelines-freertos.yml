@@ -25,14 +25,3 @@ stages:
           vmImage: 'ubuntu-20.04'
         machine: 'qemuarmv5'
         buildtype: 'freertos'
-
-- stage: multiconf
-  displayName: LinuxFreeRTOS
-  dependsOn: []
-  jobs:
-    - template: templates/build.yml
-      parameters:
-        pool:
-          vmImage: 'ubuntu-20.04'
-        machine: 'qemuarmv5'
-        buildtype: 'poky'
