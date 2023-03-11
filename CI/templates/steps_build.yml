@@ -9,8 +9,8 @@ steps:
       source oe-init-build-env
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
 
-      # Disable shared sstate for baremetal build
-      echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
+      # Uncomment to disable shared sstate for baremetal build
+      # echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
       echo "Building with the following configuration:"
       tail -n 10 conf/local.conf
       if [ -z "${BBTARGET}" ]; then
