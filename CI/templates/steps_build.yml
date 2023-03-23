@@ -4,34 +4,43 @@ parameters:
 steps:
 - ${{ if eq(parameters.buildtype, 'freertos') }}:
   - bash: |
-      echo "Building FreeRTOS image for ${MACHINE}"
+      source azp-scripts/azp-helpers.sh
+      print_section "Building FreeRTOS image for ${MACHINE}"
       cd ~/poky
       source oe-init-build-env
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
 
       # Uncomment to disable shared sstate for baremetal build
       # echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
-      echo "Building with the following configuration:"
+      print_section "Building with the following configuration:"
       tail -n 10 conf/local.conf
       if [ -z "${BBTARGET}" ]; then
-          export BBTARGET="freertos-demo"
+          if [ "${MACHINE}" = "stm32f446" ]; then
+              export BBTARGET="freertos-demo-stm32"
+          else
+              export BBTARGET="freertos-demo"
+          fi
       fi
-      echo "Running cmd: bitbake ${BBTARGET}"
+      print_section "Running cmd: bitbake ${BBTARGET}"
       bitbake ${BBTARGET}
 
     condition: succeededOrFailed()
     displayName: 'Build freertos image'
   - bash: |
-      echo "Testing FreeRTOS ${MACHINE}"
-      cd ~/poky
-      source oe-init-build-env
+      source azp-scripts/azp-helpers.sh
+      print_section "Testing FreeRTOS ${MACHINE}"
+      if [ "${MACHINE}" = "stm32f446" ]; then
+          echo "Runtime testing not enabled for STM32 microcontrollers"
+      else
+          cd ~/poky
+          source oe-init-build-env
 
-      # Enable a testcase
-      echo "IMAGE_CLASSES += \"testimage\"" >> ./conf/local.conf
-      echo "TEST_SUITES = \"freertos_echo\"" >> ./conf/local.conf
+          # Enable a testcase
+          echo "IMAGE_CLASSES += \"testimage\"" >> ./conf/local.conf
+          echo "TEST_SUITES = \"freertos_echo freertos_periodic\"" >> ./conf/local.conf
 
-      bitbake freertos-demo -c testimage
-
+          bitbake freertos-demo -c testimage
+      fi
     displayName: 'Testing FreeRTOS Echo'
 
 - bash: |
@@ -43,17 +52,24 @@ steps:
 - bash: |
     source azp-scripts/azp-helpers.sh
     rm -rf ${DEPLOY_ARTIFACTS_DIR}/*
-    # Kernel BIN
-    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image*.bin ${DEPLOY_ARTIFACTS_DIR}
     # Kernel ELF
     mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image*.elf ${DEPLOY_ARTIFACTS_DIR}
-    # QEMUboot
-    mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image-*${MACHINE}-*.qemuboot.conf ${DEPLOY_ARTIFACTS_DIR}
-  displayName: 'Moving Artifacts - $(MACHINE)'
+    if [ "${MACHINE}" = "stm32f446" ]; then
+        # Kernel HEX
+        mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image*.hex ${DEPLOY_ARTIFACTS_DIR}
+    else
+        # Kernel BIN
+        # The linker script provided by ST creates a binary of 385MB in size via objcopy, I decided
+        # to keep the linker script as is, and instead simply dont upload it as an artifact
+        mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image*.bin ${DEPLOY_ARTIFACTS_DIR}
+        # QEMUboot
+        mv /home/vsts/poky/build/tmp/deploy/images/${MACHINE}/freertos-image-*${MACHINE}-*.qemuboot.conf ${DEPLOY_ARTIFACTS_DIR}
+    fi
+  displayName: 'Moving Artifacts to be published'
 
 - publish: $(DEPLOY_ARTIFACTS_DIR)
   artifact: $(MACHINE)-${{parameters.buildtype}}
 
 - publish: $(SSTATE_DIR)
-  artifact: 'SState-${{parameters.buildtype}}'
+  artifact: SState-$(MACHINE)-${{parameters.buildtype}}
   condition: succeededOrFailed()
