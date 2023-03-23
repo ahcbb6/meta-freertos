@@ -1,6 +1,10 @@
 # meta-freertos
 FreeRTOS distro layer compatible with OpenEmbedded
 
+Currently supported BSPs:
+- QEMUARMv5
+- STM32F446 (ST Nucleo board)
+
 ## Build Status
 
 | master  | [![Build Status][masterbadge]][masterpipeline]   |
@@ -32,7 +36,7 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 
 ## FreeRTOS build setup
 
-1.- Clone the required repositories (Use -b kirkstone if you want a stable release)
+1.- Clone the required repositories
 ```bash
 $ git clone https://git.yoctoproject.org/git/poky
 $ cd poky
@@ -45,16 +49,22 @@ $ bitbake-layers add-layer ../meta-freertos
 ```
 3.- Add the required variables to your local.conf
 ```bash
-$ echo "MACHINE = \"qemuarmv5\"" >> ./conf/local.conf
 $ echo "DISTRO = \"freertos\"" >> ./conf/local.conf
+# If building for QEMU use:
+$ echo "MACHINE = \"qemuarmv5\"" >> ./conf/local.conf
+# If, instead, building for STM32 use:
+$ echo "MACHINE = \"stm32f446\"" >> ./conf/local.conf
 ```
 
 ## Build a FreeRTOS demo as a standalone application:
 4.- Build a sample FreeRTOS standalone application:
 ```bash
+# For QEMU:
 $ bitbake freertos-demo
+# For STM32:
+$ bitbake freertos-demo-stm32
 ```
-5.- Run the application on QEMU:
+5.- Run the application on QEMU (or flash the .hex file on the deploy directory for STM32):
 ```bash
 $ runqemu nographic
 ```
