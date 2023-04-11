@@ -18,18 +18,18 @@ LIC_FILES_CHKSUM ?= "file://${FREERTOS_SRC_DIR}/LICENSE;md5=7ae2be7fb16371418403
 
 
 # FreeRTOS kernel version (FreeRTOS.h)
-FREERTOS_VERSION ?= "FreeRTOSv10.4.3"
+FREERTOS_VERSION ?= "FreeRTOSv10.5.1"
 
-SRCBRANCH ?= "202012-LTS"
-FREERTOS_SRC_URI ?= "gitsm://github.com/FreeRTOS/FreeRTOS-LTS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH};protocol=https"
+SRCBRANCH ?= "main"
+FREERTOS_SRC_URI ?= "gitsm://github.com/FreeRTOS/FreeRTOS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH};protocol=https"
 
 SRCREV_FORMAT ?= "freertos_app"
-SRCREV_freertos ?= "45db7b3ccda19847d836300de059582246901ab3"
+SRCREV_freertos ?= "391c79958f635ee5476dcf2774dab59e2b151eff"
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
 # Within the repo where is the kernel located
 FREERTOS_SRC_DIR ?= "${WORKDIR}/freertos"
-FREERTOS_KERNEL_SRC ?= "${FREERTOS_SRC_DIR}/FreeRTOS/FreeRTOS-Kernel/"
+FREERTOS_KERNEL_SRC ?= "${FREERTOS_SRC_DIR}/FreeRTOS/Source/"
 
 
 
