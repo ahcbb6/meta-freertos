@@ -4,15 +4,16 @@ parameters:
 steps:
 - ${{ if eq(parameters.buildtype, 'freertos') }}:
   - bash: |
-      echo "Building FreeRTOS image for ${MACHINE}"
       source azp-scripts/azp-helpers.sh
+      print_section "Building FreeRTOS image for ${MACHINE}"
       cd ~/poky
       source oe-init-build-env
       echo "${EXTRA_LOCALCONF}" >> ./conf/local.conf
 
       # Uncomment to disable shared sstate for baremetal build
       # echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
-      echo "Building with the following configuration:"
+      echob "Building with the following configuration:"
+      echog "Green"
       tail -n 10 conf/local.conf
       if [ -z "${BBTARGET}" ]; then
           if [ "${MACHINE}" = "stm32f446" ]; then
@@ -27,9 +28,10 @@ steps:
     condition: succeededOrFailed()
     displayName: 'Build freertos image'
   - bash: |
-      echo "Testing FreeRTOS ${MACHINE}"
+      source azp-scripts/azp-helpers.sh
+      print_section "Testing FreeRTOS ${MACHINE}"
       if [ "${MACHINE}" = "stm32f446" ]; then
-          echo "Runtime testing not enabled for STM32 microcontrollers"
+          echor "Runtime testing not enabled for STM32 microcontrollers"
       else
           cd ~/poky
           source oe-init-build-env
