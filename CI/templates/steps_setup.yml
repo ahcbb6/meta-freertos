@@ -40,7 +40,7 @@ steps:
     pipeline: $(System.DefinitionId)
     runVersion: 'latestFromBranch'
     runBranch: $(BUILDBRANCH)
-    artifact: 'SState-${{parameters.buildtype}}'
+    artifact: SState-$(MACHINE)-${{parameters.buildtype}}
     targetPath: $(SSTATE_MIRRORS_DIR)
     allowPartiallySucceededBuilds: true
     allowFailedBuilds: true

@@ -72,5 +72,5 @@ steps:
   artifact: $(MACHINE)-${{parameters.buildtype}}
 
 - publish: $(SSTATE_DIR)
-  artifact: 'SState-${{parameters.buildtype}}'
+  artifact: SState-$(MACHINE)-${{parameters.buildtype}}
   condition: succeededOrFailed()
