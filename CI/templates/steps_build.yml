@@ -12,8 +12,7 @@ steps:
 
       # Uncomment to disable shared sstate for baremetal build
       # echo "SSTATE_MIRRORS=\"\"" >> ./conf/local.conf
-      echob "Building with the following configuration:"
-      echog "Green"
+      print_section "Building with the following configuration:"
       tail -n 10 conf/local.conf
       if [ -z "${BBTARGET}" ]; then
           if [ "${MACHINE}" = "stm32f446" ]; then
@@ -31,7 +30,7 @@ steps:
       source azp-scripts/azp-helpers.sh
       print_section "Testing FreeRTOS ${MACHINE}"
       if [ "${MACHINE}" = "stm32f446" ]; then
-          echor "Runtime testing not enabled for STM32 microcontrollers"
+          echo "Runtime testing not enabled for STM32 microcontrollers"
       else
           cd ~/poky
           source oe-init-build-env
