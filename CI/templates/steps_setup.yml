@@ -38,8 +38,8 @@ steps:
     source: 'specific'
     project: $(System.TeamProjectId)
     pipeline: $(System.DefinitionId)
-    runVersion: 'latestFromBranch'
-    runBranch: $(BUILDBRANCH)
+    runVersion: 'latest'
+    runBranch: 'master'
     artifact: SState-$(MACHINE)-${{parameters.buildtype}}
     targetPath: $(SSTATE_MIRRORS_DIR)
     allowPartiallySucceededBuilds: true
@@ -47,7 +47,7 @@ steps:
 
 - bash: |
     source azp-scripts/azp-helpers.sh
-    BRANCH=${{ parameters.build_branch }} clone_layers poky
+    GITHUB=1 BRANCH=master-test-qemu clone_layers poky
   continueOnError: false
   displayName: 'Clone Repositories'
 
