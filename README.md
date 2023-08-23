@@ -4,6 +4,10 @@ FreeRTOS distro layer compatible with OpenEmbedded
 Currently supported BSPs:
 - QEMUARMv5
 - STM32F446 (ST Nucleo board)
+- Raspberry Pi Pico (via the [meta-raspberrypi-baremetal](https://github.com/ahcbb6/meta-raspberrypi-baremetal) layer)
+
+For building instructions for the Raspberry Pi Pico, refer to the
+[meta-raspberrypi-baremetal layer documentation](https://github.com/ahcbb6/meta-raspberrypi-baremetal/blob/master/README.md).
 
 ## Build Status
 
