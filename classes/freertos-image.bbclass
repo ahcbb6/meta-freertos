@@ -31,6 +31,7 @@ PV = "${FREERTOS_VERSION}+git${SRCPV}"
 FREERTOS_SRC_DIR ?= "${UNPACKDIR}/freertos"
 FREERTOS_KERNEL_SRC ?= "${FREERTOS_SRC_DIR}/FreeRTOS/Source/"
 
+DEBUG_PREFIX_MAP:append = " -fdebug-prefix-map=${UNPACKDIR}=  -fmacro-prefix-map=${UNPACKDIR}="
 
 
 # RTOS App may already include FreeRTOS source code, set to 0 by default to use our own copy of FreeRTOS
