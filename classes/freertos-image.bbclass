@@ -28,7 +28,7 @@ SRCREV_freertos ?= "391c79958f635ee5476dcf2774dab59e2b151eff"
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
 # Within the repo where is the kernel located
-FREERTOS_SRC_DIR ?= "${WORKDIR}/freertos"
+FREERTOS_SRC_DIR ?= "${UNPACKDIR}/freertos"
 FREERTOS_KERNEL_SRC ?= "${FREERTOS_SRC_DIR}/FreeRTOS/Source/"
 
 
