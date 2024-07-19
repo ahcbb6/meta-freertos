@@ -31,7 +31,7 @@ do_configure:prepend(){
 
 
 # QEMU crashes when FreeRTOS is built with optimizations, disable those for now
-FULL_OPTIMIZATION = " -pipe ${DEBUG_FLAGS}"
+FULL_OPTIMIZATION = " -pipe ${DEBUG_LEVELFLAG}"
 
 
 # CFLAGS required for this specific PORT
