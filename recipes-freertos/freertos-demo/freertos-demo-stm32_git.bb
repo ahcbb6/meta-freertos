@@ -19,9 +19,9 @@ BAREMETAL_BINNAME = "FreeeRTOS-STM32-UART"
 
 inherit freertos-image
 
-SRCBRANCH="main"
+SRCBRANCH = "main"
 SRC_URI = "git://github.com/ahcbb6/FreeRTOS-STM32Demo.git;destsuffix=freertos;branch=${SRCBRANCH};protocol=https"
-S = "${WORKDIR}/freertos"
+S = "${UNPACKDIR}/freertos"
 
 SRCREV = "ba0f20b9e1d8b0b0d268bb09c848a50c3b8b6a29"
 
@@ -34,7 +34,7 @@ do_compile:prepend(){
     cd ${S}
 }
 
-B="${S}/build"
+B = "${S}/build"
 
 # On top of the elf and binary, we also want the .hex file
 FILES:${PN}:append = " \

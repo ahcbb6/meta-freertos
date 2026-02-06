@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=8f5b865d5179a4a0d9037aebbd00fc2e"
 
 inherit freertos-image
 
-S="${WORKDIR}/app"
+S = "${UNPACKDIR}/app"
 
 # App can be replaced by using a different repo
 SRC_URI += " \
@@ -46,7 +46,7 @@ QB_MACHINE = "-M versatilepb"
 QB_DTB = ""
 
 # Only create one serial console, so QEMUrunner can communicate with the target
-SERIAL_CONSOLES="115200;ttyAMA0"
+SERIAL_CONSOLES = "115200;ttyAMA0"
 
 
 #
@@ -66,3 +66,4 @@ TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] ?= "Unblocked"
 
 # We have to do = otherwise it tries to run the Linux tests from OpenEmbedded, this needs to be fixed upstream
 TEST_SUITES ?= "freertos_echo"
+
