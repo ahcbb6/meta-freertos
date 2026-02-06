@@ -13,24 +13,26 @@ For building instructions for the Raspberry Pi Pico, refer to the
 
 | master  | [![Build Status][masterbadge]][masterpipeline]   |
 |:-------:|--------------------------------------------------|
-| kirkstone | [![Build Status][kirkstonebadge]][kirkstonepipeline] |
-| dunfell | [![Build Status][dunfellbadge]][dunfellpipeline] |
+| scarthgap | [![Build Status][scarthgapbadge]][scarthgappipeline] |
+
 
 
 [masterbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
 [masterpipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=master
-[kirkstonebadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=kirkstone
-[kirkstonepipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=kirkstone
-[dunfellbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=dunfell
-[dunfellpipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=dunfell
+[scarthgapbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=scarthgap
+[scarthgappipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=scarthgap
 
 
 ## Dependencies
 
 This layer depends on:
 
-     URI: git://git.yoctoproject.org/poky
+     URI: https://git.openembedded.org/bitbake
      branch: master
+
+     URI: https://git.openembedded.org/openembedded-core
+     branch: master
+
 
 
 ## License
@@ -42,13 +44,13 @@ This layer has an MIT license (see LICENSE) and it fetches code from FreeRTOS th
 
 1.- Clone the required repositories
 ```bash
-$ git clone https://git.yoctoproject.org/git/poky
-$ cd poky
+$ git clone https://git.openembedded.org/bitbake
+$ git clone https://git.openembedded.org/openembedded-core
 $ git clone https://github.com/ahcbb6/meta-freertos.git
 ```
 2.- Add meta-freertos to your bblayers.conf
 ```bash
-$ source oe-init-build-env
+$ source openembedded-core/oe-init-build-env
 $ bitbake-layers add-layer ../meta-freertos
 ```
 3.- Add the required variables to your local.conf
