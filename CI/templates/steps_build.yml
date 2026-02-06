@@ -37,6 +37,7 @@ steps:
 
           # Enable a testcase
           echo "IMAGE_CLASSES += \"testimage\"" >> ./conf/local.conf
+          echo "IMAGE_FEATURES += \"allow-empty-password empty-root-password allow-root-login\"" >> ./conf/local.conf
           echo "TEST_SUITES = \"freertos_echo freertos_periodic\"" >> ./conf/local.conf
 
           bitbake freertos-demo -c testimage
