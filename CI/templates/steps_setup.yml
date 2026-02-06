@@ -47,7 +47,7 @@ steps:
 
 - bash: |
     source azp-scripts/azp-helpers.sh
-    BRANCH=${{ parameters.build_branch }} clone_layers poky
+    BRANCH=${{ parameters.build_branch }} clone_layers oe-core
   continueOnError: false
   displayName: 'Clone Repositories'
 
