@@ -1,8 +1,6 @@
 trigger:
 - master
 - master-next
-- kirkstone
-- dunfell
 
 schedules:
 - cron: "0 12 * * *"
@@ -10,8 +8,6 @@ schedules:
   branches:
     include:
     - master
-    - kirkstone
-    - dunfell
   always: true
 
 stages:
