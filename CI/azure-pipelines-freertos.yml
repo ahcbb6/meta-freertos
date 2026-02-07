@@ -18,12 +18,12 @@ stages:
     - template: templates/build.yml
       parameters:
         pool:
-          vmImage: 'ubuntu-22.04'
+          vmImage: 'ubuntu-24.04'
         machine: 'qemuarmv5'
         buildtype: 'freertos'
     - template: templates/build.yml
       parameters:
         pool:
-          vmImage: 'ubuntu-22.04'
+          vmImage: 'ubuntu-24.04'
         machine: 'stm32f446'
         buildtype: 'freertos'
