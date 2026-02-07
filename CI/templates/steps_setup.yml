@@ -47,7 +47,12 @@ steps:
 
 - bash: |
     source azp-scripts/azp-helpers.sh
-    BRANCH=${{ parameters.build_branch }} clone_layers oe-core
+    # To build from github, set pipeline variables GITHUB=1 and BRANCH=foo
+    # BRANCH=foo needs to exist in both oe-core and bitbake forks
+    if [ -z ${BRANCH} ]; then
+        export BRANCH="${{ parameters.build_branch }}"
+    fi
+    clone_layers oe-core
   continueOnError: false
   displayName: 'Clone Repositories'
 
