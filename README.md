@@ -95,20 +95,20 @@ Waiting For Notification - Blocked...
 ```
 
 
-## Build Linux along with FreeRTOS (Linux on qemux86-64 and FreeRTOS on qemuarmv5):
+## Build Linux along with FreeRTOS (Linux on qemuarm64 and FreeRTOS on qemuarmv5):
 (First 3 steps still apply)
 
 4.- Enable multiconfig builds on your local.conf
 ```bash
-$ echo "BBMULTICONFIG = \"dummy-x86-64\"" >> ./conf/local.conf
+$ echo "BBMULTICONFIG = \"dummy-arm64\"" >> ./conf/local.conf
 ```
 5.- Create a multiconfig dependency so freertos gets built automatically when building Linux
 ```bash
-$ echo "do_image[mcdepends] = \"multiconfig:dummy-x86-64::freertos-demo-local:do_image\"" >> ./conf/local.conf
+$ echo "do_image[mcdepends] = \"multiconfig:dummy-arm64::freertos-demo-local:do_image\"" >> ./conf/local.conf
 ```
 6.- Build Linux image and get a FreeRTOS demo for free!
 ```bash
-$ bitbake mc:dummy-x86-64:core-image-minimal
+$ bitbake mc:dummy-arm64:core-image-minimal
 ```
 7.- Run the FreeRTOS application on QEMU:
 ```bash
@@ -116,5 +116,5 @@ $ runqemu nographic
 ```
 8.- Run the Linux image on QEMU (Assuming you used the default settings):
 ```bash
-$ runqemu nographic tmp-qemux86-64-glibc/deploy/images/qemux86-64/core-image-minimal-qemux86-64.qemuboot.conf
+$ runqemu nographic tmp-qemuarm64-glibc/deploy/images/qemuarm64/core-image-minimal-qemuarm64.qemuboot.conf
 ```
