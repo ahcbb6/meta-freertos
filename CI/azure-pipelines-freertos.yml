@@ -1,7 +1,6 @@
 trigger:
 - master
 - master-next
-- dunfell
 
 schedules:
 - cron: "0 12 * * *"
@@ -9,7 +8,6 @@ schedules:
   branches:
     include:
     - master
-    - dunfell
   always: true
 
 stages:
