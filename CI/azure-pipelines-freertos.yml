@@ -10,8 +10,6 @@ schedules:
   branches:
     include:
     - master
-    - kirkstone
-    - dunfell
   always: true
 
 stages:
