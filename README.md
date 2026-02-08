@@ -51,7 +51,7 @@ $ git clone https://github.com/ahcbb6/meta-freertos.git
 2.- Add meta-freertos to your bblayers.conf
 ```bash
 $ source openembedded-core/oe-init-build-env
-$ bitbake-layers add-layer ../meta-freertos
+$ bitbake-layers add-layer meta-freertos
 ```
 3.- Add the required variables to your local.conf
 ```bash
