@@ -67,3 +67,5 @@ TESTIMAGE_BOOT_PATTERNS[search_cmd_finished] ?= "Unblocked"
 # We have to do = otherwise it tries to run the Linux tests from OpenEmbedded, this needs to be fixed upstream
 TEST_SUITES ?= "freertos_echo"
 
+# If we enable stack protector we would need to create stubs for many newlib functions
+CFLAGS:append = " -fno-stack-protector"

@@ -48,3 +48,5 @@ do_install:append() {
 do_image:append(){
     install -m 755 ${B}/${BAREMETAL_BINNAME}.hex ${IMGDEPLOYDIR}/${IMAGE_LINK_NAME}.hex
 }
+
+CFLAGS:append = " -fno-stack-protector"
