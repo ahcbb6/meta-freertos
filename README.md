@@ -12,15 +12,10 @@ For building instructions for the Raspberry Pi Pico, refer to the
 ## Build Status
 
 | master  | [![Build Status][masterbadge]][masterpipeline]   |
-|:-------:|--------------------------------------------------|
-| scarthgap | [![Build Status][scarthgapbadge]][scarthgappipeline] |
-
 
 
 [masterbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
 [masterpipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=master
-[scarthgapbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=scarthgap
-[scarthgappipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=scarthgap
 
 
 ## Dependencies
