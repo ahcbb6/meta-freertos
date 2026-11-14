@@ -14,8 +14,8 @@ For building instructions for the Raspberry Pi Pico, refer to the
 | master  | [![Build Status][masterbadge]][masterpipeline]   |
 
 
-[masterbadge]: https://dev.azure.com/ahcbb6/meta-freertos/_apis/build/status/FreeRTOS?branchName=master
-[masterpipeline]: https://dev.azure.com/ahcbb6/meta-freertos/_build/latest?definitionId=32&branchName=master
+[masterbadge]: https://github.com/ahcbb6/meta-freertos/actions/workflows/freertos.yml/badge.svg?branch=master
+[masterpipeline]: https://github.com/ahcbb6/meta-freertos/actions/workflows/freertos.yml?query=branch%3Amaster
 
 
 ## Dependencies

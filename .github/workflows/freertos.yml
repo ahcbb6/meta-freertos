@@ -1,0 +1,174 @@
+name: FreeRTOS
+
+on:
+  push:
+    branches: [master, master-next]
+  pull_request:
+    branches: [master, master-next]
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+    inputs:
+      oe_branch:
+        description: "Upstream selection (master/scarthgap), or branch in both GitHub forks"
+        type: string
+        default: ""
+      use_github_forks:
+        description: "Use ahcbb6 OE-Core and BitBake forks (branch defaults to this branch)"
+        type: boolean
+        default: false
+      bitbake_target:
+        description: "Override image targets, space-separated"
+        type: string
+        default: ""
+      extra_localconf:
+        description: "Additional local.conf settings"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: freertos-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: FreeRTOS (${{ matrix.machine }})
+    if: github.event_name != 'schedule' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: [qemuarmv5, stm32f446]
+    defaults:
+      run:
+        shell: bash
+    env:
+      MACHINE: ${{ matrix.machine }}
+      CI_BUILD_DIR: ${{ github.workspace }}/build
+      CI_ARTIFACTS: ${{ github.workspace }}/artifacts
+      CI_SSTATE: ${{ github.workspace }}/sstate-cache
+      CI_SSTATE_MIRROR: ${{ github.workspace }}/sstate-mirror
+      CI_DOWNLOADS: ${{ github.workspace }}/downloads
+      CI_BRANCH: ${{ github.base_ref || github.ref_name }}
+      OE_BRANCH: ${{ inputs.oe_branch || '' }}
+      USE_GITHUB_FORKS: ${{ inputs.use_github_forks || false }}
+      BBTARGET: ${{ inputs.bitbake_target || '' }}
+      EXTRA_LOCALCONF: ${{ inputs.extra_localconf || '' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: source
+          persist-credentials: false
+
+      - name: Prepare hosted runner
+        run: bash source/CI/prepare-runner.sh
+
+      - name: Restore sstate
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ${{ env.CI_SSTATE }}
+          key: sstate-v1-ubuntu26-${{ matrix.machine }}-freertos-${{ env.CI_BRANCH }}-run-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            sstate-v1-ubuntu26-${{ matrix.machine }}-freertos-${{ env.CI_BRANCH }}-run-
+
+      - name: Separate restored mirror from new sstate
+        run: |
+          mv "$CI_SSTATE" "$CI_SSTATE_MIRROR"
+          mkdir "$CI_SSTATE"
+
+      - name: Configure BitBake
+        run: bash source/CI/setup-build.sh
+
+      - name: Build FreeRTOS image
+        id: build
+        timeout-minutes: 300
+        run: |
+          source openembedded-core/oe-init-build-env "$CI_BUILD_DIR"
+          if [[ -n $BBTARGET ]]; then
+            read -r -a targets <<< "$BBTARGET"
+          elif [[ $MACHINE == stm32f446 ]]; then
+            targets=(freertos-demo-stm32)
+          else
+            targets=(freertos-demo)
+          fi
+          if (( ${#targets[@]} == 0 )); then
+            echo "No BitBake image targets specified" >&2
+            exit 1
+          fi
+          bitbake "${targets[@]}" 2>&1 | tee "$CI_ARTIFACTS/bitbake.log"
+
+      - name: Test FreeRTOS echo and periodic output
+        if: success() && matrix.machine == 'qemuarmv5'
+        timeout-minutes: 15
+        run: |
+          source openembedded-core/oe-init-build-env "$CI_BUILD_DIR"
+          cat >> conf/local.conf <<'EOF'
+          IMAGE_CLASSES += "testimage"
+          IMAGE_FEATURES += "allow-empty-password empty-root-password allow-root-login"
+          TEST_SUITES = "freertos_echo freertos_periodic"
+          EOF
+          bitbake freertos-demo -c testimage 2>&1 | tee "$CI_ARTIFACTS/testimage.log"
+
+      - name: Collect images
+        if: success()
+        run: python3 source/CI/artifacts.py images "$CI_BUILD_DIR" "$CI_ARTIFACTS/images" "$MACHINE"
+
+      - name: Upload images
+        if: success()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ${{ matrix.machine }}-freertos
+          path: ${{ env.CI_ARTIFACTS }}/images/*
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Collect diagnostics
+        if: ${{ always() && !cancelled() }}
+        run: |
+          python3 source/CI/artifacts.py logs "$CI_BUILD_DIR" "$CI_ARTIFACTS"
+          df -h
+
+      - name: Upload diagnostics
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: logs-${{ matrix.machine }}
+          path: |
+            ${{ env.CI_ARTIFACTS }}/revisions.txt
+            ${{ env.CI_ARTIFACTS }}/bitbake.log
+            ${{ env.CI_ARTIFACTS }}/testimage.log
+            ${{ env.CI_ARTIFACTS }}/diagnostics.tar.zst
+          if-no-files-found: warn
+          compression-level: 0
+          retention-days: 1
+
+      - name: Make sstate snapshot self-contained
+        id: sstate-snapshot
+        if: ${{ always() && !cancelled() && (steps.build.outcome == 'success' || steps.build.outcome == 'failure') }}
+        run: python3 source/CI/artifacts.py sstate "$CI_SSTATE" "$CI_SSTATE_MIRROR"
+
+      - name: Save sstate
+        if: ${{ always() && !cancelled() && steps.sstate-snapshot.outcome == 'success' && github.event_name != 'pull_request' }}
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ${{ env.CI_SSTATE }}
+          key: sstate-v1-ubuntu26-${{ matrix.machine }}-freertos-${{ env.CI_BRANCH }}-run-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Package sstate artifact
+        if: ${{ always() && !cancelled() && steps.sstate-snapshot.outcome == 'success' }}
+        run: python3 source/CI/artifacts.py archive "$CI_SSTATE" "$CI_ARTIFACTS/sstate.tar.zst"
+
+      - name: Upload sstate artifact
+        if: ${{ always() && !cancelled() && steps.sstate-snapshot.outcome == 'success' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: SState-${{ matrix.machine }}-freertos
+          path: ${{ env.CI_ARTIFACTS }}/sstate.tar.zst
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
