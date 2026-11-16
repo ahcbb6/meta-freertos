@@ -4,6 +4,10 @@ Since we have newlib available now, patch the
 Makefile to use it, other apps should not need
 this.
 
+Link statically through the target compiler driver so it finds the matching libgcc.
+FreeRTOS v11.3.3 uses division in xTaskPeriodicDelay, which needs the ARM
+__aeabi_uidiv helper from libgcc.
+
 Upstream-Status: Inappropriate [oe-specific]
 
 Signed-off-by: Alejandro Hernandez <alejandro@enedino.org>
@@ -26,7 +30,7 @@ Index: bsp/Makefile
  
  $(ELF_IMAGE) : $(OBJS) $(LINKER_SCRIPT)
 -	$(LD) -nostdlib -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) $(OFLAG) $@
-+	$(LD) -L ${STAGING_LIBDIR} -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) -lc $(OFLAG) $@
++	$(CC) -static -nostdlib -L ${STAGING_LIBDIR} -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) -lc -lgcc $(OFLAG) $@
  
  debug : _debug_flags all
  

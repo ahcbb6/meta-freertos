@@ -14,22 +14,23 @@
 LICENSE = "MIT"
 # FreeRTOS License, careful here, the gitsm fetcher does not work properly with license checking
 # double check this manually after an upgrade
-LIC_FILES_CHKSUM ?= "file://${FREERTOS_SRC_DIR}/LICENSE;md5=7ae2be7fb1637141840314b51970a9f7"
+LIC_FILES_CHKSUM ?= "file://${FREERTOS_SRC_DIR}/LICENSE.md;md5=7ae2be7fb1637141840314b51970a9f7"
 
 
 # FreeRTOS kernel version (FreeRTOS.h)
-FREERTOS_VERSION ?= "FreeRTOSv10.5.1"
+FREERTOS_VERSION ?= "FreeRTOSv11.3.3"
 
 SRCBRANCH ?= "main"
-FREERTOS_SRC_URI ?= "gitsm://github.com/FreeRTOS/FreeRTOS.git;name=freertos;destsuffix=freertos;branch=${SRCBRANCH};protocol=https"
+# Kernel release tags are not necessarily reachable from main.
+FREERTOS_SRC_URI ?= "gitsm://github.com/FreeRTOS/FreeRTOS-Kernel.git;name=freertos;destsuffix=freertos;nobranch=1;protocol=https"
 
 SRCREV_FORMAT ?= "freertos_app"
-SRCREV_freertos ?= "391c79958f635ee5476dcf2774dab59e2b151eff"
+SRCREV_freertos ?= "89592801dd8b73329a7583719b7e3567b50910e5"
 PV = "${FREERTOS_VERSION}+git${SRCPV}"
 
 # Within the repo where is the kernel located
 FREERTOS_SRC_DIR ?= "${UNPACKDIR}/freertos"
-FREERTOS_KERNEL_SRC ?= "${FREERTOS_SRC_DIR}/FreeRTOS/Source/"
+FREERTOS_KERNEL_SRC ?= "${FREERTOS_SRC_DIR}/"
 
 DEBUG_PREFIX_MAP:append = " -fdebug-prefix-map=${UNPACKDIR}=  -fmacro-prefix-map=${UNPACKDIR}="
 
