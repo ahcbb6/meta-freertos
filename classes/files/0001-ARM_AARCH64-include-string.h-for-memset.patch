@@ -1,0 +1,23 @@
+From: Copilot <223556219+Copilot@users.noreply.github.com>
+Subject: [PATCH] ARM_AARCH64: include string.h for memset
+
+The AArch64 port clears the initial FPU context with memset when
+configUSE_TASK_FPU_SUPPORT is 2. Include its declaration so this
+configuration builds with compilers that reject implicit declarations.
+
+Upstream-Status: Pending
+---
+ portable/GCC/ARM_AARCH64/port.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/portable/GCC/ARM_AARCH64/port.c b/portable/GCC/ARM_AARCH64/port.c
+--- a/portable/GCC/ARM_AARCH64/port.c
++++ b/portable/GCC/ARM_AARCH64/port.c
+@@ -28,6 +28,7 @@
+ 
+ /* Standard includes. */
+ #include <stdlib.h>
++#include <string.h>
+ 
+ /* Scheduler includes. */
+ #include "FreeRTOS.h"

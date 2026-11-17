@@ -18,3 +18,19 @@ class FreeRTOSTest(OERuntimeTestCase):
         status, output = self.target.runner.run_serial(cmd,raw=True)
         match = bool(re.search(cmd,output))
         self.assertEqual(match, True)
+
+    @OETimeout(15)
+    def test_freertos_echo_input(self):
+        if self.td["MACHINE"] not in ("qemuarm", "qemuarm64"):
+            self.skipTest("Input handling is specific to the shared QEMU demo")
+
+        for command, echoed in (("\r", ""), ("\n", ""), (" ", " "), ("~", "~"),
+                                ("\x00\x08\x1b\x1f\x7f~", "~")):
+            with self.subTest(command=repr(command)):
+                status, output = self.target.runner.run_serial(
+                    command, raw=True, timeout=2)
+                self.assertEqual(status, 1, output)
+                response = ('You entered: "%s"\r\nUnblocked\r\n'
+                            'Waiting For Notification - Blocked...\r\n') % echoed
+                self.assertIn(response, output)
+                self.assertEqual(output.count("You entered:"), 1, output)

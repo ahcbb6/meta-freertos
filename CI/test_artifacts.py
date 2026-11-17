@@ -25,19 +25,21 @@ class ArtifactsTest(unittest.TestCase):
                 artifacts.images(root, root / "missing", "stm32f446")
 
     def test_qemu_publishes_link_contents_and_configuration(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            deploy = root / "tmp/deploy/images/qemuarmv5"
-            deploy.mkdir(parents=True)
-            for suffix in (".elf", ".bin", ".qemuboot.conf"):
-                name = f"freertos-image-qemuarmv5-20260101{suffix}"
-                (deploy / name).write_text(suffix)
-                if suffix != ".qemuboot.conf":
-                    (deploy / f"freertos-image-qemuarmv5{suffix}").symlink_to(name)
-            artifacts.images(root, root / "images", "qemuarmv5")
-            self.assertEqual(len(list((root / "images").iterdir())), 5)
-            self.assertFalse((root / "images/freertos-image-qemuarmv5.elf").is_symlink())
-            self.assertEqual((root / "images/freertos-image-qemuarmv5.elf").read_text(), ".elf")
+        for machine in ("qemuarm", "qemuarm64"):
+            with self.subTest(machine=machine), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                deploy = root / "tmp/deploy/images" / machine
+                deploy.mkdir(parents=True)
+                for suffix in (".elf", ".bin", ".qemuboot.conf"):
+                    name = f"freertos-image-{machine}-20260101{suffix}"
+                    (deploy / name).write_text(suffix)
+                    if suffix != ".qemuboot.conf":
+                        (deploy / f"freertos-image-{machine}{suffix}").symlink_to(name)
+                artifacts.images(root, root / "images", machine)
+                self.assertEqual(len(list((root / "images").iterdir())), 5)
+                image = root / "images" / f"freertos-image-{machine}.elf"
+                self.assertFalse(image.is_symlink())
+                self.assertEqual(image.read_text(), ".elf")
 
     def test_sstate_snapshot_survives_removal_of_mirror(self):
         with tempfile.TemporaryDirectory() as directory:
