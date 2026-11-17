@@ -27,3 +27,5 @@ class FreeRTOSTest(OERuntimeTestCase):
         status, output = self.target.runner.run_serial(cmd,raw=True, timeout=12)
         match = bool(re.search(pattern,output))
         self.assertEqual(match, True)
+        if self.td["MACHINE"] in ("qemuarm", "qemuarm64", "qemuriscv32", "qemuriscv64"):
+            self.assertGreaterEqual(output.count("Task1\r\n"), 5, output)

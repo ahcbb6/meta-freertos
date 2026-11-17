@@ -25,7 +25,7 @@ class ArtifactsTest(unittest.TestCase):
                 artifacts.images(root, root / "missing", "stm32f446")
 
     def test_qemu_publishes_link_contents_and_configuration(self):
-        for machine in ("qemuarm", "qemuarm64"):
+        for machine in ("qemuarm", "qemuarm64", "qemuriscv32", "qemuriscv64"):
             with self.subTest(machine=machine), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 deploy = root / "tmp/deploy/images" / machine

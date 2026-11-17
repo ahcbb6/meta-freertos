@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        machine: [qemuarm, qemuarm64, stm32f446]
+        machine: [qemuarm, qemuarm64, qemuriscv32, qemuriscv64, stm32f446]
     defaults:
       run:
         shell: bash
@@ -103,7 +103,7 @@ jobs:
           bitbake "${targets[@]}" 2>&1 | tee "$CI_ARTIFACTS/bitbake.log"
 
       - name: Test FreeRTOS echo and periodic output
-        if: success() && (matrix.machine == 'qemuarm' || matrix.machine == 'qemuarm64')
+        if: success() && (matrix.machine == 'qemuarm' || matrix.machine == 'qemuarm64' || matrix.machine == 'qemuriscv32' || matrix.machine == 'qemuriscv64')
         timeout-minutes: 15
         run: |
           source openembedded-core/oe-init-build-env "$CI_BUILD_DIR"

@@ -8,7 +8,7 @@ inherit freertos-qemuvirt
 SRC_URI += " \
     git://github.com/ahcbb6/FreeRTOS-Demo-OE.git;name=app;destsuffix=app;branch=main;protocol=https \
 "
-SRCREV_app = "6248986ea87339fbc05b7d137176cef7cb66cff1"
+SRCREV_app = "93d2f45cd0cc6a043f0507a894912cd8cd248a64"
 LIC_FILES_CHKSUM += "file://LICENSE;md5=84f28cbb4c7940fe70671601f2c750cb"
 
 S = "${UNPACKDIR}/app"

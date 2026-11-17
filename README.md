@@ -4,6 +4,8 @@ FreeRTOS distro layer compatible with OpenEmbedded
 Currently supported BSPs:
 - QEMUARM (OE-Core `qemuarm`, Cortex-A15 on `virt`, single core)
 - QEMUARM64 (OE-Core `qemuarm64`, Cortex-A57 on `virt`, single core)
+- QEMURISCV32 (OE-Core `qemuriscv32`, RV32GC on `virt`, single hart, machine mode)
+- QEMURISCV64 (OE-Core `qemuriscv64`, RV64GC on `virt`, single hart, machine mode)
 - STM32F446 (ST Nucleo board)
 - Raspberry Pi Pico (via the [meta-raspberrypi-baremetal](https://github.com/ahcbb6/meta-raspberrypi-baremetal) layer)
 
@@ -59,6 +61,10 @@ $ echo "DISTRO = \"freertos\"" >> ./conf/local.conf
 $ echo "MACHINE = \"qemuarm\"" >> ./conf/local.conf
 # If, instead, building for QEMU AArch64 use:
 $ echo "MACHINE = \"qemuarm64\"" >> ./conf/local.conf
+# If, instead, building for QEMU RISC-V 64-bit use:
+$ echo "MACHINE = \"qemuriscv64\"" >> ./conf/local.conf
+# If, instead, building for QEMU RISC-V 32-bit use:
+$ echo "MACHINE = \"qemuriscv32\"" >> ./conf/local.conf
 # If, instead, building for STM32 use:
 $ echo "MACHINE = \"stm32f446\"" >> ./conf/local.conf
 ```
@@ -82,12 +88,21 @@ The `qemuarm` and `qemuarm64` demos share application tasks, QEMU `virt`
 UART/GICv2 drivers, timer scheduling, configuration, and linker layout.
 Only startup, exception vectors, register access, and the upstream kernel port
 differ: `ARM_CA9` for Cortex-A15 and `ARM_AARCH64` at EL1 for Cortex-A57.
-The demo uses the architectural physical timer and PL011 console. It echoes
+The ARM demos use the architectural physical timer and PL011 console.
+`qemuriscv32` and `qemuriscv64` run the same application with the upstream
+`RISC-V` kernel port, a 16550-compatible UART, and the CLINT `mtime`/`mtimecmp`
+timer. Both boot
+directly in machine mode without OpenSBI or U-Boot; the BSP supplies startup,
+memory layout, and fatal trap diagnostics. Yocto's RV32GC/ILP32D and
+RV64GC/LP64D tunes are retained,
+with floating-point context handling enabled in the upstream port.
+
+The demo echoes
 printable ASCII input; carriage return and line feed each produce
 `You entered: ""`, while other non-printable bytes are ignored. It prints
-`Periodic task 10 secs` every ten seconds. Both
+`Periodic task 10 secs` every ten seconds. All four
 QEMU machines use the same `freertos-demo` target and publish ELF, binary, and
-QEMU boot configuration artifacts in CI. Both `virt` boot configurations select
+QEMU boot configuration artifacts in CI. All `virt` boot configurations select
 the ELF image so QEMU uses its linked entry point.
 
 The application is fetched from
@@ -98,6 +113,7 @@ the architecture, and provides compiler flags and QEMU integration. It inherits
 `freertos-image`, which fetches the upstream kernel separately. Other
 applications can inherit `freertos-qemuvirt` to reuse the same BSP.
 
+
 To run the echo and periodic-output runtime tests, add these settings to
 `local.conf` and run `bitbake freertos-demo -c testimage`:
 ```bitbake
@@ -106,7 +122,7 @@ IMAGE_FEATURES += "allow-empty-password empty-root-password allow-root-login"
 TEST_SUITES = "freertos_echo freertos_periodic"
 ```
 
-Sample output on either QEMU machine:
+Sample output on any supported QEMU machine:
 ```bash
 FreeRTOS V11.3.3 on QEMU virt
 Waiting For Notification - Blocked...
